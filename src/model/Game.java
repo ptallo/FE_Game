@@ -4,12 +4,18 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public class Game {
+
+    private Map map;
+
+    public Game() {
+        map = new Map();
+    }
+
     public void update() {
 
     }
 
     public void draw(GraphicsContext gc) {
-        gc.setStroke(Color.RED);
-        gc.strokeRect(10, 10, 50, 50);
+        map.draw(gc);
     }
 }
