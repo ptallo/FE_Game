@@ -8,16 +8,26 @@ public class GameScreen {
     private Canvas canvas;
     private GraphicsContext gc;
 
+    private Game game;
+
     public GameScreen(Game game, Group root) {
-        canvas = new Canvas(250,250);
-        gc = canvas.getGraphicsContext2D();
-
+        this.game = game;
+        initCanvas();
         root.getChildren().add(canvas);
+    }
 
+    private void initCanvas() {
+        canvas = new Canvas(600, 600);
+        gc = canvas.getGraphicsContext2D();
+    }
+
+    public void initDrawLoop() {
         new AnimationTimer() {
             @Override
             public void handle(long now) {
-                game.draw(gc);
+                if (game != null) {
+                    game.draw(gc);
+                }
             }
         }.start();
     }
