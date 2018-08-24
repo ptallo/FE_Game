@@ -1,8 +1,6 @@
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -17,13 +15,10 @@ public class GameApplication extends Application {
         Scene scene = new Scene(root, primaryStage.getWidth(), primaryStage.getHeight(), Color.LIGHTGRAY);
         primaryStage.setScene(scene);
 
-        final Canvas canvas = new Canvas(250,250);
-        GraphicsContext gc = canvas.getGraphicsContext2D();
+        GameController controller = new GameController(primaryStage);
+        GameScreen screen = new GameScreen(controller.getGame(), root);
 
-        gc.setFill(Color.BLUE);
-        gc.fillRect(20,20,100,100);
-
-        root.getChildren().add(canvas);
+        screen.initDrawLoop();
 
         primaryStage.show();
     }
