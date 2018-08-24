@@ -6,6 +6,7 @@ import javafx.scene.paint.Color;
 public class Game {
 
     private Map map;
+    private Player player = new Player();
 
     public Game() {
         map = new Map();
@@ -17,5 +18,6 @@ public class Game {
 
     public void draw(GraphicsContext gc) {
         map.draw(gc);
+        player.draw(gc);
     }
 }
