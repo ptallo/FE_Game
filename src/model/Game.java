@@ -26,6 +26,7 @@ public class Game {
         selectionIndicator = new SelectionIndicator();
         units = new ArrayList<>();
         units.add(UnitEnum.SPEARMAN.getUnitInstance(2, 3));
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(4, 3));
     }
 
     public void handleKeyEvent(KeyEvent event) {
@@ -43,13 +44,16 @@ public class Game {
     }
 
     public void handleEnterKey() {
+        //handle unit selection
         Unit selectedUnit = null;
         for (Unit unit : units) {
-            if (unit.getPoint().getX().equals(cursor.getSelectionPoint().getX()) && unit.getPoint().getY().equals(cursor.getSelectionPoint().getY())) {
+            if (cursor.getSelectionPoint().equals(unit.getPoint())) {
                 selectedUnit = unit;
             }
         }
-        if (this.selectedUnit != null) {
+
+        //handle unit movement
+        if (this.selectedUnit != null && selectedUnit == null) {
             Point movePoint = new Point(cursor.getSelectionPoint().getX(), cursor.getSelectionPoint().getY());
             if (map.getTileAtPoint(movePoint).getPassable()){
                 this.selectedUnit.setPoint(movePoint);

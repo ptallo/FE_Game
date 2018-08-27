@@ -17,4 +17,8 @@ public class Point {
     public Integer getY() {
         return y;
     }
+
+    public boolean equals(Point point){
+        return point.getX().equals(x) && point.getY().equals(y);
+    }
 }
