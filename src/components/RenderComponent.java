@@ -2,7 +2,7 @@ package components;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import model.Map;
+import model.map.Map;
 import model.Point;
 
 import java.io.File;

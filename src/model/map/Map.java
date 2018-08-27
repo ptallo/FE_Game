@@ -1,6 +1,7 @@
-package model;
+package model.map;
 
 import javafx.scene.canvas.GraphicsContext;
+import model.Point;
 
 import java.util.ArrayList;
 
