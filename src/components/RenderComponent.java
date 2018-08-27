@@ -29,14 +29,8 @@ public class RenderComponent {
     }
 
     public void draw(GraphicsContext gc, Point point){
-        long currentTime = System.currentTimeMillis();
-        if (Math.abs(currentTime - lastAnimationTime) > animationDuration) {
-            if (currentFrame + 1 >= frameCount) {
-                currentFrame = 0;
-            } else {
-                currentFrame++;
-            }
-            lastAnimationTime = currentTime;
+        if (frameCount > 1) {
+            animate();
         }
 
         gc.drawImage(
@@ -50,5 +44,17 @@ public class RenderComponent {
                 Map.Tile_Width,
                 Map.Tile_Height
         );
+    }
+
+    private void animate() {
+        long currentTime = System.currentTimeMillis();
+        if (Math.abs(currentTime - lastAnimationTime) > animationDuration) {
+            if (currentFrame + 1 >= frameCount) {
+                currentFrame = 0;
+            } else {
+                currentFrame++;
+            }
+            lastAnimationTime = currentTime;
+        }
     }
 }
