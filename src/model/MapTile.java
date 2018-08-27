@@ -11,7 +11,7 @@ public class MapTile {
         renderComponent = new RenderComponent(path, 32, 32, 1000);
     }
 
-    public void draw(GraphicsContext gc, Point mapCoordinates) {
-        renderComponent.draw(gc, mapCoordinates);
+    public RenderComponent getRenderComponent() {
+        return renderComponent;
     }
 }

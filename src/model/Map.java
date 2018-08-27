@@ -26,7 +26,7 @@ public class Map {
     public void draw(GraphicsContext gc){
         for (int y = 0; y < mapTiles.size(); y++) {
             for (int x = 0; x < mapTiles.get(y).size(); x++) {
-                mapTiles.get(y).get(x).draw(gc, new Point(x, y));
+                mapTiles.get(y).get(x).getRenderComponent().draw(gc, new Point(x, y));
             }
         }
     }
