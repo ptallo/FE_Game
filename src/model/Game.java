@@ -38,16 +38,19 @@ public class Game {
         } else if (event.getCode() == KeyCode.RIGHT) {
             cursor.movePoint(1, 0, map);
         } else if (event.getCode() == KeyCode.ENTER) {
-            selectUnit();
+            handleEnterKey();
         }
     }
 
-    public void selectUnit() {
+    public void handleEnterKey() {
         Unit selectedUnit = null;
         for (Unit unit : units) {
             if (unit.getPoint().getX().equals(cursor.getSelectionPoint().getX()) && unit.getPoint().getY().equals(cursor.getSelectionPoint().getY())) {
                 selectedUnit = unit;
             }
+        }
+        if (this.selectedUnit != null) {
+            this.selectedUnit.setPoint(new Point(cursor.getSelectionPoint().getX(), cursor.getSelectionPoint().getY()));
         }
         this.selectedUnit = selectedUnit;
     }
