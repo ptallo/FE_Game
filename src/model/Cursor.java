@@ -39,4 +39,8 @@ public class Cursor {
 
         selectionPoint = new Point(newX, newY);
     }
+
+    public Point getSelectionPoint() {
+        return selectionPoint;
+    }
 }

@@ -32,7 +32,15 @@ public class Game {
         } else if (event.getCode() == KeyCode.RIGHT) {
             cursor.movePoint(1, 0, map);
         } else if (event.getCode() == KeyCode.ENTER) {
+            selectUnit();
+        }
+    }
 
+    public void selectUnit() {
+        for (Unit unit : units) {
+            if (unit.getPoint().getX().equals(cursor.getSelectionPoint().getX()) && unit.getPoint().getY().equals(cursor.getSelectionPoint().getY())) {
+                System.out.println("selected");
+            }
         }
     }
 
