@@ -42,4 +42,8 @@ public class Map {
             mapTiles.add(newRow);
         }
     }
+
+    public ArrayList<ArrayList<MapTile>> getMapTiles() {
+        return mapTiles;
+    }
 }

@@ -14,17 +14,7 @@ public class GameController {
     }
 
     private void handleKeyEvent(KeyEvent event){
-        if (event.getCode() == KeyCode.UP){
-            System.out.println("up");
-        } else if (event.getCode() == KeyCode.LEFT) {
-            System.out.println("left");
-        } else if (event.getCode() == KeyCode.RIGHT) {
-            System.out.println("right");
-        } else if (event.getCode() == KeyCode.DOWN) {
-            System.out.println("down");
-        } else if (event.getCode() == KeyCode.ENTER) {
-            System.out.println("enter");
-        }
+        game.handleKeyEvent(event);
     }
 
     public Game getGame() {
