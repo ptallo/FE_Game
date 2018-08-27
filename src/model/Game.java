@@ -1,12 +1,11 @@
 package model;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 
 public class Game {
 
     private Map map;
-    private Player player = new Player();
+    private Cursor cursor = new Cursor();
 
     public Game() {
         map = new Map();
@@ -18,6 +17,6 @@ public class Game {
 
     public void draw(GraphicsContext gc) {
         map.draw(gc);
-        player.draw(gc);
+        cursor.draw(gc);
     }
 }
