@@ -9,7 +9,7 @@ public class GameApplication extends Application {
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setFullScreen(true);
-        primaryStage.setTitle("FE Game");
+        primaryStage.setTitle("FE model.Game");
 
         Group root = new Group();
         Scene scene = new Scene(root, primaryStage.getWidth(), primaryStage.getHeight(), Color.LIGHTGRAY);
