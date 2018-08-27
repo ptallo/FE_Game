@@ -1,7 +1,6 @@
 package model;
 
 import components.RenderComponent;
-import javafx.scene.canvas.GraphicsContext;
 
 public class MapTile {
 
