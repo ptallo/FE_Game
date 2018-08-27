@@ -4,15 +4,22 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import model.map.Map;
+import model.unit.Unit;
+import model.unit.UnitEnum;
+
+import java.util.ArrayList;
 
 public class Game {
 
     private Map map;
     private Cursor cursor;
+    private ArrayList<Unit> units;
 
     public Game() {
         map = new Map();
         cursor = new Cursor();
+        units = new ArrayList<>();
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(2, 3));
     }
 
     public void handleKeyEvent(KeyEvent event) {
@@ -31,6 +38,9 @@ public class Game {
 
     public void draw(GraphicsContext gc) {
         map.draw(gc);
+        for (Unit unit : units) {
+            unit.getRenderComponent().draw(gc, unit.getPoint());
+        }
         cursor.draw(gc);
     }
 }
