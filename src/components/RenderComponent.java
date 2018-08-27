@@ -45,8 +45,8 @@ public class RenderComponent {
                 0,
                 frameWidth,
                 frameHeight,
-                point.getX(),
-                point.getY(),
+                point.getX() * Map.Tile_Width,
+                point.getY() * Map.Tile_Height,
                 Map.Tile_Width,
                 Map.Tile_Height
         );

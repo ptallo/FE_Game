@@ -1,25 +1,17 @@
 package model;
 
+import components.RenderComponent;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-
-import java.io.File;
 
 public class MapTile {
 
-    private Image image;
+    private RenderComponent renderComponent;
 
     public MapTile(String path) {
-        image = new Image(new File("resources/" + path).toURI().toString());
+        renderComponent = new RenderComponent(path, 32, 32, 1000);
     }
 
     public void draw(GraphicsContext gc, Point mapCoordinates) {
-        gc.drawImage(
-                image,
-                mapCoordinates.getX() * Map.Tile_Width,
-                mapCoordinates.getY() * Map.Tile_Height,
-                Map.Tile_Width,
-                Map.Tile_Height
-        );
+        renderComponent.draw(gc, mapCoordinates);
     }
 }
