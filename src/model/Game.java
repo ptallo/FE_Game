@@ -50,7 +50,10 @@ public class Game {
             }
         }
         if (this.selectedUnit != null) {
-            this.selectedUnit.setPoint(new Point(cursor.getSelectionPoint().getX(), cursor.getSelectionPoint().getY()));
+            Point movePoint = new Point(cursor.getSelectionPoint().getX(), cursor.getSelectionPoint().getY());
+            if (map.getTileAtPoint(movePoint).getPassable()){
+                this.selectedUnit.setPoint(movePoint);
+            }
         }
         this.selectedUnit = selectedUnit;
     }
