@@ -1,7 +1,8 @@
-package model;
+package model.cursor;
 
 import components.RenderComponent;
 import javafx.scene.canvas.GraphicsContext;
+import model.Point;
 import model.map.Map;
 
 public class Cursor {
