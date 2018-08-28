@@ -3,9 +3,11 @@ package model;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
 import model.cursor.Cursor;
 import model.cursor.SelectionIndicator;
 import model.map.Map;
+import model.map.MapTile;
 import model.unit.Unit;
 import model.unit.UnitEnum;
 
@@ -26,6 +28,7 @@ public class Game {
         selectionIndicator = new SelectionIndicator();
         units = new ArrayList<>();
         units.add(UnitEnum.SPEARMAN.getUnitInstance(2, 3));
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(4, 3));
     }
 
     public void handleKeyEvent(KeyEvent event) {
@@ -38,15 +41,24 @@ public class Game {
         } else if (event.getCode() == KeyCode.RIGHT) {
             cursor.movePoint(1, 0, map);
         } else if (event.getCode() == KeyCode.ENTER) {
-            selectUnit();
+            handleEnterKey();
         }
     }
 
-    public void selectUnit() {
+    public void handleEnterKey() {
+        //handle unit selection
         Unit selectedUnit = null;
         for (Unit unit : units) {
-            if (unit.getPoint().getX().equals(cursor.getSelectionPoint().getX()) && unit.getPoint().getY().equals(cursor.getSelectionPoint().getY())) {
+            if (cursor.getSelectionPoint().equals(unit.getPoint())) {
                 selectedUnit = unit;
+            }
+        }
+
+        //handle unit movement
+        if (this.selectedUnit != null && selectedUnit == null) {
+            Point movePoint = new Point(cursor.getSelectionPoint().getX(), cursor.getSelectionPoint().getY());
+            if (map.getTileAtPoint(movePoint).getPassable()){
+                this.selectedUnit.setPoint(movePoint);
             }
         }
         this.selectedUnit = selectedUnit;
@@ -59,6 +71,7 @@ public class Game {
         }
 
         if (selectedUnit != null) {
+            selectedUnit.drawMovableArea(gc, map, units);
             selectionIndicator.getRenderComponent().draw(gc, selectedUnit.getPoint());
         }
 

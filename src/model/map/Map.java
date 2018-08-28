@@ -46,4 +46,8 @@ public class Map {
     public ArrayList<ArrayList<MapTile>> getMapTiles() {
         return mapTiles;
     }
+
+    public MapTile getTileAtPoint(Point point) {
+        return mapTiles.get(point.getY()).get(point.getX());
+    }
 }
