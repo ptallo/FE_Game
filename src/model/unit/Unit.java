@@ -6,6 +6,8 @@ import javafx.scene.paint.Color;
 import model.Point;
 import model.map.Map;
 
+import java.util.ArrayList;
+
 public class Unit {
     public RenderComponent renderComponent;
     public Point point;
@@ -35,11 +37,19 @@ public class Unit {
         return travelDistance;
     }
 
-    public void drawMovableArea(GraphicsContext gc, Map map) {
+    public void drawMovableArea(GraphicsContext gc, Map map, ArrayList<Unit> units) {
         for (int x = 0; x < map.getMapTiles().get(0).size(); x++) {
             for (int y = 0; y < map.getMapTiles().size(); y++) {
                 Point testPoint = new Point(x, y);
-                if (point.getTravelDistance(testPoint) <= travelDistance && map.getTileAtPoint(testPoint).getPassable()){
+
+                boolean containsUnit = false;
+                for (Unit unit : units) {
+                    if (unit.getPoint().equals(testPoint)){
+                        containsUnit = true;
+                    }
+                }
+
+                if (point.getTravelDistance(testPoint) <= travelDistance && map.getTileAtPoint(testPoint).getPassable() && !containsUnit){
                     gc.setFill(Color.rgb(0, 0, 255, 0.3));
                     gc.fillRect(
                             testPoint.getX() * Map.Tile_Width,

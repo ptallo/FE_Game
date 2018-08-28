@@ -71,7 +71,7 @@ public class Game {
         }
 
         if (selectedUnit != null) {
-            selectedUnit.drawMovableArea(gc, map);
+            selectedUnit.drawMovableArea(gc, map, units);
             selectionIndicator.getRenderComponent().draw(gc, selectedUnit.getPoint());
         }
 
