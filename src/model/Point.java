@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class Point {
 
@@ -45,7 +46,7 @@ public class Point {
         return neighbors;
     }
 
-    public boolean inArray(ArrayList<Point> points) {
+    public boolean inCollection(Collection<Point> points) {
         for (Point point : points) {
             if (point.equals(this)) {
                 return true;

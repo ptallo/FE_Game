@@ -54,7 +54,7 @@ public class Game {
 
         //handle unit movement
         if (this.selectedUnit != null && selectedUnit == null) {
-            if (cursor.getSelectionPoint().inArray(this.selectedUnit.getMovablePoints(map, units))) {
+            if (cursor.getSelectionPoint().inCollection(this.selectedUnit.getMovablePoints(map, units))) {
                 this.selectedUnit.setPoint(cursor.getSelectionPoint().clone());
             }
         }

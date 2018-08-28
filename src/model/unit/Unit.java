@@ -13,12 +13,10 @@ public class Unit {
     public RenderComponent renderComponent;
     public Point point;
     private Integer travelDistance;
-    private ArrayList<Point> movablePoints;
 
     public Unit(String path, int x, int y) {
         renderComponent = new RenderComponent(path, 32, 32, 1000);
         point = new Point(x, y);
-        movablePoints = new ArrayList<>();
         travelDistance = 3;
     }
 
@@ -57,7 +55,7 @@ public class Unit {
             ArrayList<Point> neighborsToAdd = new ArrayList<>();
             for (Point point : points) {
                 for (Point neighbor : point.getNeighbors()) {
-                    if (!neighbor.inArray(points) && !neighbor.inArray(neighborsToAdd) && pointIsMovable(map, units, neighbor)) {
+                    if (!neighbor.inCollection(points) && !neighbor.inCollection(neighborsToAdd) && pointIsMovable(map, units, neighbor)) {
                         neighborsToAdd.add(neighbor);
                     }
                 }
