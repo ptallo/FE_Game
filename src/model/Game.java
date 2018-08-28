@@ -3,11 +3,9 @@ package model;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.paint.Color;
 import model.cursor.Cursor;
 import model.cursor.SelectionIndicator;
 import model.map.Map;
-import model.map.MapTile;
 import model.unit.Unit;
 import model.unit.UnitEnum;
 
@@ -56,9 +54,8 @@ public class Game {
 
         //handle unit movement
         if (this.selectedUnit != null && selectedUnit == null) {
-            Point movePoint = new Point(cursor.getSelectionPoint().getX(), cursor.getSelectionPoint().getY());
-            if (map.getTileAtPoint(movePoint).getPassable()){
-                this.selectedUnit.setPoint(movePoint);
+            if (cursor.getSelectionPoint().inArray(this.selectedUnit.getMovablePoints(map, units))) {
+                this.selectedUnit.setPoint(cursor.getSelectionPoint().clone());
             }
         }
         this.selectedUnit = selectedUnit;
@@ -66,13 +63,13 @@ public class Game {
 
     public void draw(GraphicsContext gc) {
         map.draw(gc);
-        for (Unit unit : units) {
-            unit.getRenderComponent().draw(gc, unit.getPoint());
-        }
-
         if (selectedUnit != null) {
             selectedUnit.drawMovableArea(gc, map, units);
             selectionIndicator.getRenderComponent().draw(gc, selectedUnit.getPoint());
+        }
+
+        for (Unit unit : units) {
+            unit.getRenderComponent().draw(gc, unit.getPoint());
         }
 
         cursor.draw(gc);

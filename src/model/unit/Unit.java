@@ -5,6 +5,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import model.Point;
 import model.map.Map;
+import model.map.MapTile;
 
 import java.util.ArrayList;
 
@@ -12,11 +13,13 @@ public class Unit {
     public RenderComponent renderComponent;
     public Point point;
     private Integer travelDistance;
+    private ArrayList<Point> movablePoints;
 
     public Unit(String path, int x, int y) {
         renderComponent = new RenderComponent(path, 32, 32, 1000);
         point = new Point(x, y);
-        travelDistance = 2;
+        movablePoints = new ArrayList<>();
+        travelDistance = 3;
     }
 
     public RenderComponent getRenderComponent() {
@@ -33,31 +36,47 @@ public class Unit {
         }
     }
 
-    public Integer getTravelDistance() {
-        return travelDistance;
+    public void drawMovableArea(GraphicsContext gc, Map map, ArrayList<Unit> units) {
+        ArrayList<Point> movablePoints = getMovablePoints(map, units);
+        for (Point point : movablePoints) {
+            gc.setFill(Color.rgb(0, 0, 255, 0.3));
+            gc.fillRect(
+                    point.getX() * Map.Tile_Width,
+                    point.getY() * Map.Tile_Height,
+                    Map.Tile_Width,
+                    Map.Tile_Height
+            );
+        }
     }
 
-    public void drawMovableArea(GraphicsContext gc, Map map, ArrayList<Unit> units) {
-        for (int x = 0; x < map.getMapTiles().get(0).size(); x++) {
-            for (int y = 0; y < map.getMapTiles().size(); y++) {
-                Point testPoint = new Point(x, y);
+    public ArrayList<Point> getMovablePoints(Map map, ArrayList<Unit> units) {
+        ArrayList<Point> points = new ArrayList<>();
+        points.add(point);
 
-                boolean containsUnit = false;
-                for (Unit unit : units) {
-                    if (unit.getPoint().equals(testPoint)){
-                        containsUnit = true;
+        for (int i = travelDistance; i > 0; i--) {
+            ArrayList<Point> neighborsToAdd = new ArrayList<>();
+            for (Point point : points) {
+                for (Point neighbor : point.getNeighbors()) {
+                    if (!neighbor.inArray(points) && !neighbor.inArray(neighborsToAdd) && pointIsMovable(map, units, neighbor)) {
+                        neighborsToAdd.add(neighbor);
                     }
                 }
+            }
+            points.addAll(neighborsToAdd);
+        }
 
-                if (point.getTravelDistance(testPoint) <= travelDistance && map.getTileAtPoint(testPoint).getPassable() && !containsUnit){
-                    gc.setFill(Color.rgb(0, 0, 255, 0.3));
-                    gc.fillRect(
-                            testPoint.getX() * Map.Tile_Width,
-                            testPoint.getY() * Map.Tile_Height,
-                            Map.Tile_Width,
-                            Map.Tile_Height);
-                }
+        return points;
+    }
+
+    private boolean pointIsMovable(Map map, ArrayList<Unit> units, Point testPoint) {
+        boolean unitAtPoint = false;
+        for (Unit unit : units) {
+            if (unit.getPoint().equals(testPoint)) {
+                unitAtPoint = true;
             }
         }
+
+        MapTile tileAtPoint = map.getTileAtPoint(testPoint);
+        return !unitAtPoint && tileAtPoint != null && tileAtPoint.getPassable();
     }
 }

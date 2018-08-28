@@ -48,6 +48,9 @@ public class Map {
     }
 
     public MapTile getTileAtPoint(Point point) {
+        if (point.getY() >= mapTiles.size() || point.getY() < 0 || point.getX() >= mapTiles.get(0).size() - 1 || point.getX() < 0) {
+            return null;
+        }
         return mapTiles.get(point.getY()).get(point.getX());
     }
 }
