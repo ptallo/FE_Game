@@ -14,13 +14,13 @@ public class Map {
 
     public Map() {
         ArrayList<String> mapDef = new ArrayList<>();
-        mapDef.add("0011000");
-        mapDef.add("0000000");
-        mapDef.add("0000000");
-        mapDef.add("0000000");
-        mapDef.add("1000000");
-        mapDef.add("1100000");
-        mapDef.add("1110000");
+        mapDef.add("0000000000");
+        mapDef.add("0000111000");
+        mapDef.add("0000101000");
+        mapDef.add("0000101000");
+        mapDef.add("1000000000");
+        mapDef.add("1100000000");
+        mapDef.add("1110000000");
         initMapTiles(mapDef);
     }
 

@@ -25,8 +25,8 @@ public class Game {
         cursor = new Cursor();
         selectionIndicator = new SelectionIndicator();
         units = new ArrayList<>();
-        units.add(UnitEnum.SPEARMAN.getUnitInstance(2, 3));
-        units.add(UnitEnum.SPEARMAN.getUnitInstance(4, 3));
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(1, 3));
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(1, 4));
     }
 
     public void handleKeyEvent(KeyEvent event) {
@@ -43,7 +43,7 @@ public class Game {
         }
     }
 
-    public void handleEnterKey() {
+    private void handleEnterKey() {
         //handle unit selection
         Unit selectedUnit = null;
         for (Unit unit : units) {

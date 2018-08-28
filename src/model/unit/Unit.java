@@ -10,8 +10,8 @@ import model.map.MapTile;
 import java.util.ArrayList;
 
 public class Unit {
-    public RenderComponent renderComponent;
-    public Point point;
+    private RenderComponent renderComponent;
+    private Point point;
     private Integer travelDistance;
 
     public Unit(String path, int x, int y) {
