@@ -25,10 +25,6 @@ public class Point {
         return point.getX().equals(x) && point.getY().equals(y);
     }
 
-    public int getTravelDistance(Point point) {
-        return Math.abs(point.getX() - x) + Math.abs(point.getY() - y);
-    }
-
     public ArrayList<Point> getNeighbors() {
         ArrayList<Point> neighbors = new ArrayList<>();
         Point leftNeighbor = new Point(x - 1, y);

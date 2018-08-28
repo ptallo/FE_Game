@@ -47,15 +47,15 @@ public class Game {
         //handle unit selection
         Unit selectedUnit = null;
         for (Unit unit : units) {
-            if (cursor.getSelectionPoint().equals(unit.getPoint())) {
+            if (cursor.getSelectionPoint().equals(unit.getPhysicsComponent().getPoint())) {
                 selectedUnit = unit;
             }
         }
 
         //handle unit movement
         if (this.selectedUnit != null && selectedUnit == null) {
-            if (cursor.getSelectionPoint().inCollection(this.selectedUnit.getMovablePoints(map, units))) {
-                this.selectedUnit.setPoint(cursor.getSelectionPoint().clone());
+            if (cursor.getSelectionPoint().inCollection(this.selectedUnit.getPhysicsComponent().getMovablePoints(map, units))) {
+                this.selectedUnit.getPhysicsComponent().setPoint(cursor.getSelectionPoint().clone(), map, units);
             }
         }
         this.selectedUnit = selectedUnit;
@@ -64,12 +64,12 @@ public class Game {
     public void draw(GraphicsContext gc) {
         map.draw(gc);
         if (selectedUnit != null) {
-            selectedUnit.drawMovableArea(gc, map, units);
-            selectionIndicator.getRenderComponent().draw(gc, selectedUnit.getPoint());
+            selectedUnit.getPhysicsComponent().drawMovableArea(gc, map, units);
+            selectionIndicator.getRenderComponent().draw(gc, selectedUnit.getPhysicsComponent().getPoint());
         }
 
         for (Unit unit : units) {
-            unit.getRenderComponent().draw(gc, unit.getPoint());
+            unit.getRenderComponent().draw(gc, unit.getPhysicsComponent().getPoint());
         }
 
         cursor.draw(gc);
