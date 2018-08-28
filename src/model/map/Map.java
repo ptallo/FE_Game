@@ -16,11 +16,14 @@ public class Map {
         ArrayList<String> mapDef = new ArrayList<>();
         mapDef.add("0000000000");
         mapDef.add("0000111000");
-        mapDef.add("0000101000");
+        mapDef.add("0000100000");
         mapDef.add("0000101000");
         mapDef.add("1000000000");
         mapDef.add("1100000000");
-        mapDef.add("1110000000");
+        mapDef.add("0110000000");
+        mapDef.add("0010000000");
+        mapDef.add("0000000000");
+        mapDef.add("0000000000");
         initMapTiles(mapDef);
     }
 
@@ -48,7 +51,7 @@ public class Map {
     }
 
     public MapTile getTileAtPoint(Point point) {
-        if (point.getY() >= mapTiles.size() || point.getY() < 0 || point.getX() >= mapTiles.get(0).size() - 1 || point.getX() < 0) {
+        if (point.getY() >= mapTiles.size() || point.getY() < 0 || point.getX() >= mapTiles.get(0).size() || point.getX() < 0) {
             return null;
         }
         return mapTiles.get(point.getY()).get(point.getX());

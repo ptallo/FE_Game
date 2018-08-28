@@ -30,10 +30,14 @@ public class PhysicsComponent {
     }
 
     public ArrayList<Point> getMovablePoints(Map map, ArrayList<Unit> units) {
+        return getMovablePoints(map, units, travelDistance);
+    }
+
+    public ArrayList<Point> getMovablePoints(Map map, ArrayList<Unit> units, int distance) {
         ArrayList<Point> points = new ArrayList<>();
         points.add(point);
 
-        for (int i = travelDistance; i > 0; i--) {
+        for (int i = distance; i > 0; i--) {
             ArrayList<Point> neighborsToAdd = new ArrayList<>();
             for (Point point : points) {
                 for (Point neighbor : point.getNeighbors()) {
