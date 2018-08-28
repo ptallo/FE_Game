@@ -3,9 +3,11 @@ package model;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
 import model.cursor.Cursor;
 import model.cursor.SelectionIndicator;
 import model.map.Map;
+import model.map.MapTile;
 import model.unit.Unit;
 import model.unit.UnitEnum;
 
@@ -69,6 +71,7 @@ public class Game {
         }
 
         if (selectedUnit != null) {
+            selectedUnit.drawMovableArea(gc, map);
             selectionIndicator.getRenderComponent().draw(gc, selectedUnit.getPoint());
         }
 

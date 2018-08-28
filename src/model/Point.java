@@ -21,4 +21,8 @@ public class Point {
     public boolean equals(Point point){
         return point.getX().equals(x) && point.getY().equals(y);
     }
+
+    public int getTravelDistance(Point point) {
+        return Math.abs(point.getX() - x) + Math.abs(point.getY() - y);
+    }
 }
