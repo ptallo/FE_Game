@@ -1,5 +1,6 @@
 package model;
 
+import components.render.RenderSystem;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -13,17 +14,16 @@ import java.util.ArrayList;
 
 public class Game {
 
-    private Map map;
-    private Cursor cursor;
-    private SelectionIndicator selectionIndicator;
+    private RenderSystem renderSystem = new RenderSystem();
+
+    private Map map = new Map();
+    private Cursor cursor = new Cursor();
+    private SelectionIndicator selectionIndicator = new SelectionIndicator();
 
     private ArrayList<Unit> units;
     private Unit selectedUnit;
 
     public Game() {
-        map = new Map();
-        cursor = new Cursor();
-        selectionIndicator = new SelectionIndicator();
         units = new ArrayList<>();
         units.add(UnitEnum.SPEARMAN.getUnitInstance(1, 3));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(1, 4));
@@ -76,13 +76,13 @@ public class Game {
         map.draw(gc);
         if (selectedUnit != null) {
             selectedUnit.getPhysicsComponent().drawMovableArea(gc, map, units);
-            selectionIndicator.getRenderComponent().draw(gc, selectedUnit.getPhysicsComponent().getPoint());
+            renderSystem.draw(selectionIndicator.getRenderComponent(), gc, selectedUnit.getPhysicsComponent().getPoint());
         }
 
         for (Unit unit : units) {
-            unit.getRenderComponent().draw(gc, unit.getPhysicsComponent().getPoint());
+            renderSystem.draw(unit.getRenderComponent(), gc, unit.getPhysicsComponent().getPoint());
         }
 
-        cursor.draw(gc);
+        renderSystem.draw(cursor.getRenderComponent(), gc, cursor.getSelectionPoint());
     }
 }

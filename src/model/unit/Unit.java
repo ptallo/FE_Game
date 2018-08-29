@@ -2,7 +2,7 @@ package model.unit;
 
 import components.CombatComponent;
 import components.PhysicsComponent;
-import components.RenderComponent;
+import components.render.RenderComponent;
 
 public class Unit {
     private RenderComponent renderComponent;

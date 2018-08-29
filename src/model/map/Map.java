@@ -1,5 +1,6 @@
 package model.map;
 
+import components.render.RenderSystem;
 import javafx.scene.canvas.GraphicsContext;
 import model.Point;
 
@@ -7,6 +8,7 @@ import java.util.ArrayList;
 
 public class Map {
 
+    private RenderSystem renderSystem = new RenderSystem();
     public static final double Tile_Width = 32;
     public static final double Tile_Height = 32;
 
@@ -30,7 +32,7 @@ public class Map {
     public void draw(GraphicsContext gc){
         for (int y = 0; y < mapTiles.size(); y++) {
             for (int x = 0; x < mapTiles.get(y).size(); x++) {
-                mapTiles.get(y).get(x).getRenderComponent().draw(gc, new Point(x, y));
+                renderSystem.draw(mapTiles.get(y).get(x).getRenderComponent(), gc, new Point(x, y));
             }
         }
     }

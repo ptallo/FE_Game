@@ -1,7 +1,6 @@
 package model.cursor;
 
-import components.RenderComponent;
-import javafx.scene.canvas.GraphicsContext;
+import components.render.RenderComponent;
 import model.Point;
 import model.map.Map;
 
@@ -15,8 +14,8 @@ public class Cursor {
         renderComponent = new RenderComponent("selection_cursor.png", 32, 32, 1000);
     }
 
-    public void draw(GraphicsContext gc){
-        renderComponent.draw(gc, selectionPoint);
+    public RenderComponent getRenderComponent() {
+        return renderComponent;
     }
 
     public void movePoint(int x, int y, Map map) {
