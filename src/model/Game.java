@@ -53,9 +53,20 @@ public class Game {
         }
 
         //handle unit movement
-        if (this.selectedUnit != null && selectedUnit == null) {
-            if (cursor.getSelectionPoint().inCollection(this.selectedUnit.getPhysicsComponent().getMovablePoints(map, units))) {
-                this.selectedUnit.getPhysicsComponent().setPoint(cursor.getSelectionPoint().clone(), map, units);
+        if (this.selectedUnit != null) {
+            if (selectedUnit == null) {
+                if (cursor.getSelectionPoint().inCollection(this.selectedUnit.getPhysicsComponent().getMovablePoints(map, units))) {
+                    this.selectedUnit.getPhysicsComponent().setPoint(cursor.getSelectionPoint().clone(), map, units);
+                }
+            } else {
+                this.selectedUnit.getCombatComponent().fight(selectedUnit.getCombatComponent());
+                if (selectedUnit.getCombatComponent().isDead()){
+                    units.remove(selectedUnit);
+                }
+                if (this.selectedUnit.getCombatComponent().isDead()){
+                    units.remove(this.selectedUnit);
+                }
+                selectedUnit = null;
             }
         }
         this.selectedUnit = selectedUnit;
