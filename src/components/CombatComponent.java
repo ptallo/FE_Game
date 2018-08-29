@@ -1,9 +1,5 @@
 package components;
 
-import model.unit.Unit;
-
-import java.util.ArrayList;
-
 public class CombatComponent {
 
     private int healthCap;
