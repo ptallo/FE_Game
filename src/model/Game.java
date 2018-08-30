@@ -1,5 +1,6 @@
 package model;
 
+import components.CombatSystem;
 import components.physics.PhysicsSystem;
 import components.render.RenderSystem;
 import javafx.scene.canvas.GraphicsContext;
@@ -17,6 +18,7 @@ public class Game {
 
     private RenderSystem renderSystem = new RenderSystem();
     private PhysicsSystem physicsSystem = new PhysicsSystem();
+    private CombatSystem combatSystem = new CombatSystem();
 
     private Map map = new Map();
     private Cursor cursor = new Cursor();
@@ -59,13 +61,7 @@ public class Game {
             if (selectedUnit == null) {
                 physicsSystem.setPoint(this.selectedUnit.getPhysicsComponent(), cursor.getSelectionPoint(), map, units);
             } else {
-                this.selectedUnit.getCombatComponent().fight(selectedUnit.getCombatComponent());
-                if (selectedUnit.getCombatComponent().isDead()){
-                    units.remove(selectedUnit);
-                }
-                if (this.selectedUnit.getCombatComponent().isDead()){
-                    units.remove(this.selectedUnit);
-                }
+                combatSystem.completeCombat(this.selectedUnit, selectedUnit, units);
                 selectedUnit = null;
             }
         }
