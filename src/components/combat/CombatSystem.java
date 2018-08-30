@@ -1,4 +1,4 @@
-package components;
+package components.combat;
 
 import model.unit.Unit;
 

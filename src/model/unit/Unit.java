@@ -1,6 +1,6 @@
 package model.unit;
 
-import components.CombatComponent;
+import components.combat.CombatComponent;
 import components.physics.PhysicsComponent;
 import components.render.RenderComponent;
 

@@ -1,6 +1,6 @@
 package model;
 
-import components.CombatSystem;
+import components.combat.CombatSystem;
 import components.physics.PhysicsSystem;
 import components.render.RenderSystem;
 import javafx.scene.canvas.GraphicsContext;
