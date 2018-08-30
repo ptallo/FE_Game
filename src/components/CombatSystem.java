@@ -17,20 +17,15 @@ public class CombatSystem {
         }
     }
 
-    private int fight(CombatComponent attacker, CombatComponent defender) {
+    private void fight(CombatComponent attacker, CombatComponent defender) {
         //return -1 if attacker died, 0 if neither died and 1 if defender died
         takeDamage(defender, attacker.getDamage());
 
         if (defender.isDead()) {
-            return 1;
+            return;
         }
 
         takeDamage(attacker, defender.getDamage());
-
-        if (attacker.isDead()) {
-            return -1;
-        }
-        return 0;
     }
 
     private void takeDamage(CombatComponent component, int amount){
