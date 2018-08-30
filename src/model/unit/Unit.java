@@ -1,7 +1,7 @@
 package model.unit;
 
 import components.CombatComponent;
-import components.PhysicsComponent;
+import components.physics.PhysicsComponent;
 import components.render.RenderComponent;
 
 public class Unit {

@@ -1,5 +1,6 @@
 package model;
 
+import components.physics.PhysicsSystem;
 import components.render.RenderSystem;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 public class Game {
 
     private RenderSystem renderSystem = new RenderSystem();
+    private PhysicsSystem physicsSystem = new PhysicsSystem();
 
     private Map map = new Map();
     private Cursor cursor = new Cursor();
@@ -55,9 +57,7 @@ public class Game {
         //handle unit movement
         if (this.selectedUnit != null) {
             if (selectedUnit == null) {
-                if (cursor.getSelectionPoint().inCollection(this.selectedUnit.getPhysicsComponent().getMovablePoints(map, units))) {
-                    this.selectedUnit.getPhysicsComponent().setPoint(cursor.getSelectionPoint().clone(), map, units);
-                }
+                physicsSystem.setPoint(this.selectedUnit.getPhysicsComponent(), cursor.getSelectionPoint(), map, units);
             } else {
                 this.selectedUnit.getCombatComponent().fight(selectedUnit.getCombatComponent());
                 if (selectedUnit.getCombatComponent().isDead()){
@@ -75,7 +75,7 @@ public class Game {
     public void draw(GraphicsContext gc) {
         map.draw(gc);
         if (selectedUnit != null) {
-            selectedUnit.getPhysicsComponent().drawMovableArea(gc, map, units);
+            physicsSystem.drawMovableArea(selectedUnit.getPhysicsComponent(), gc, map, units);
             renderSystem.draw(selectionIndicator.getRenderComponent(), gc, selectedUnit.getPhysicsComponent().getPoint());
         }
 
