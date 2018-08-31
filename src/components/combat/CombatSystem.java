@@ -1,17 +1,17 @@
 package components.combat;
 
-import model.unit.Unit;
+import model.ObjectInterface;
 
 import java.util.ArrayList;
 
 public class CombatSystem {
-    public void completeCombat(Unit attacker, Unit defender, ArrayList<Unit> units) {
+    public void completeCombat(ObjectInterface attacker, ObjectInterface defender, ArrayList<ObjectInterface> units) {
         fight(attacker.getCombatComponent(), defender.getCombatComponent());
         checkDeath(defender, units);
         checkDeath(attacker, units);
     }
 
-    private void checkDeath(Unit unit, ArrayList<Unit> units) {
+    private void checkDeath(ObjectInterface unit, ArrayList<ObjectInterface> units) {
         if (unit.getCombatComponent().isDead()){
             units.remove(unit);
         }

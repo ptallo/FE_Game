@@ -5,19 +5,18 @@ import javafx.scene.paint.Color;
 import model.Point;
 import model.map.Map;
 import model.map.MapTile;
-import model.unit.Unit;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PhysicsSystem {
-    public void setPoint(PhysicsComponent component, Point point, Map map, ArrayList<Unit> units) {
+    public void setPoint(PhysicsComponent component, Point point, Map map, List<PhysicsComponent> units) {
         if (point.inCollection(getMovablePoints(component, map, units))) {
             component.setPoint(point);
         }
     }
 
-    private ArrayList<Point> getMovablePoints(PhysicsComponent component, Map map, ArrayList<Unit> units) {
+    private ArrayList<Point> getMovablePoints(PhysicsComponent component, Map map, List<PhysicsComponent> units) {
         ArrayList<Point> points = new ArrayList<>();
         points.add(component.getPoint());
 
@@ -37,10 +36,10 @@ public class PhysicsSystem {
         return points;
     }
 
-    private boolean pointIsMovable(Map map, ArrayList<Unit> units, Point testPoint) {
+    private boolean pointIsMovable(Map map, List<PhysicsComponent> units, Point testPoint) {
         boolean unitAtPoint = false;
-        for (Unit unit : units) {
-            if (unit.getPhysicsComponent().getPoint().equals(testPoint)) {
+        for (PhysicsComponent unit : units) {
+            if (unit.getPoint().equals(testPoint)) {
                 unitAtPoint = true;
             }
         }
@@ -49,7 +48,7 @@ public class PhysicsSystem {
         return !unitAtPoint && tileAtPoint != null && tileAtPoint.getPassable();
     }
 
-    public void drawMovableArea(PhysicsComponent component, GraphicsContext gc, Map map, ArrayList<Unit> units) {
+    public void drawMovableArea(PhysicsComponent component, GraphicsContext gc, Map map, List<PhysicsComponent> units) {
         List<Point> movablePoints = getMovablePoints(component, map, units);
         for (Point point : movablePoints) {
             gc.setFill(Color.rgb(0, 0, 255, 0.3));

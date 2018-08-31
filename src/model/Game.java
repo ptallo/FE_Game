@@ -1,6 +1,7 @@
 package model;
 
 import components.combat.CombatSystem;
+import components.physics.PhysicsComponent;
 import components.physics.PhysicsSystem;
 import components.render.RenderSystem;
 import javafx.scene.canvas.GraphicsContext;
@@ -9,10 +10,11 @@ import javafx.scene.input.KeyEvent;
 import model.cursor.Cursor;
 import model.cursor.SelectionIndicator;
 import model.map.Map;
-import model.unit.Unit;
 import model.unit.UnitEnum;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Game {
 
@@ -24,8 +26,8 @@ public class Game {
     private Cursor cursor = new Cursor();
     private SelectionIndicator selectionIndicator = new SelectionIndicator();
 
-    private ArrayList<Unit> units;
-    private Unit selectedUnit;
+    private ArrayList<ObjectInterface> units;
+    private ObjectInterface selectedUnit;
 
     public Game() {
         units = new ArrayList<>();
@@ -49,8 +51,8 @@ public class Game {
 
     private void handleEnterKey() {
         //handle unit selection
-        Unit selectedUnit = null;
-        for (Unit unit : units) {
+        ObjectInterface selectedUnit = null;
+        for (ObjectInterface unit : units) {
             if (cursor.getSelectionPoint().equals(unit.getPhysicsComponent().getPoint())) {
                 selectedUnit = unit;
             }
@@ -59,7 +61,8 @@ public class Game {
         //handle unit movement
         if (this.selectedUnit != null) {
             if (selectedUnit == null) {
-                physicsSystem.setPoint(this.selectedUnit.getPhysicsComponent(), cursor.getSelectionPoint(), map, units);
+                List<PhysicsComponent> componentList = units.stream().map(ObjectInterface::getPhysicsComponent).collect(Collectors.toList());
+                physicsSystem.setPoint(this.selectedUnit.getPhysicsComponent(), cursor.getSelectionPoint(), map, componentList);
             } else {
                 combatSystem.completeCombat(this.selectedUnit, selectedUnit, units);
                 selectedUnit = null;
@@ -71,12 +74,17 @@ public class Game {
     public void draw(GraphicsContext gc) {
         map.draw(gc);
         if (selectedUnit != null) {
-            physicsSystem.drawMovableArea(selectedUnit.getPhysicsComponent(), gc, map, units);
-            renderSystem.draw(selectionIndicator.getRenderComponent(), gc, selectedUnit.getPhysicsComponent().getPoint());
+            if (selectedUnit.getPhysicsComponent() != null) {
+                List<PhysicsComponent> componentList = units.stream().map(ObjectInterface::getPhysicsComponent).collect(Collectors.toList());
+                physicsSystem.drawMovableArea(selectedUnit.getPhysicsComponent(), gc, map, componentList);
+                renderSystem.draw(selectionIndicator.getRenderComponent(), gc, selectedUnit.getPhysicsComponent().getPoint());
+            }
         }
 
-        for (Unit unit : units) {
-            renderSystem.draw(unit.getRenderComponent(), gc, unit.getPhysicsComponent().getPoint());
+        for (ObjectInterface unit : units) {
+            if (unit.getRenderComponent() != null) {
+                renderSystem.draw(unit.getRenderComponent(), gc, unit.getPhysicsComponent().getPoint());
+            }
         }
 
         renderSystem.draw(cursor.getRenderComponent(), gc, cursor.getSelectionPoint());
