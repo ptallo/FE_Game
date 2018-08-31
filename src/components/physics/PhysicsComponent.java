@@ -1,15 +1,6 @@
 package components.physics;
 
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import model.Point;
-import model.map.Map;
-import model.map.MapTile;
-import model.unit.Unit;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class PhysicsComponent {
     private Point point;
