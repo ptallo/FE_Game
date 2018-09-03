@@ -50,7 +50,6 @@ public class Game {
     }
 
     private void handleEnterKey() {
-        //handle unit selection
         ObjectInterface selectedUnit = null;
         for (ObjectInterface unit : units) {
             if (cursor.getSelectionPoint().equals(unit.getPhysicsComponent().getPoint())) {
@@ -58,7 +57,6 @@ public class Game {
             }
         }
 
-        //handle unit movement
         if (this.selectedUnit != null) {
             if (selectedUnit == null) {
                 List<PhysicsComponent> componentList = units.stream().map(ObjectInterface::getPhysicsComponent).collect(Collectors.toList());
