@@ -64,7 +64,7 @@ public class Game {
                 List<PhysicsComponent> componentList = units.stream().map(ObjectInterface::getPhysicsComponent).collect(Collectors.toList());
                 physicsSystem.setPoint(this.selectedUnit.getPhysicsComponent(), cursor.getSelectionPoint(), map, componentList);
             } else {
-                combatSystem.completeCombat(this.selectedUnit, selectedUnit);
+                combatSystem.completeCombat(this.selectedUnit, selectedUnit, units);
                 selectedUnit = null;
             }
         }
