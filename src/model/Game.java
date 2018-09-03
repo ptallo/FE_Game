@@ -26,7 +26,7 @@ public class Game {
     private Cursor cursor = new Cursor();
     private SelectionIndicator selectionIndicator = new SelectionIndicator();
 
-    private ArrayList<ObjectInterface> units;
+    private static ArrayList<ObjectInterface> units = new ArrayList<>();
     private ObjectInterface selectedUnit;
 
     public Game() {
@@ -64,7 +64,7 @@ public class Game {
                 List<PhysicsComponent> componentList = units.stream().map(ObjectInterface::getPhysicsComponent).collect(Collectors.toList());
                 physicsSystem.setPoint(this.selectedUnit.getPhysicsComponent(), cursor.getSelectionPoint(), map, componentList);
             } else {
-                combatSystem.completeCombat(this.selectedUnit, selectedUnit, units);
+                combatSystem.completeCombat(this.selectedUnit, selectedUnit);
                 selectedUnit = null;
             }
         }
@@ -88,5 +88,9 @@ public class Game {
         }
 
         renderSystem.draw(cursor.getRenderComponent(), gc, cursor.getSelectionPoint());
+    }
+
+    public static ArrayList<ObjectInterface> getUnits() {
+        return units;
     }
 }
