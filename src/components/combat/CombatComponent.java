@@ -1,5 +1,7 @@
 package components.combat;
 
+import model.Game;
+
 public class CombatComponent {
 
     private int healthCap;

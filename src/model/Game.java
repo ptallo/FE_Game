@@ -26,7 +26,7 @@ public class Game {
     private Cursor cursor = new Cursor();
     private SelectionIndicator selectionIndicator = new SelectionIndicator();
 
-    private static ArrayList<ObjectInterface> units = new ArrayList<>();
+    private ArrayList<ObjectInterface> units;
     private ObjectInterface selectedUnit;
 
     public Game() {
@@ -88,9 +88,5 @@ public class Game {
         }
 
         renderSystem.draw(cursor.getRenderComponent(), gc, cursor.getSelectionPoint());
-    }
-
-    public static ArrayList<ObjectInterface> getUnits() {
-        return units;
     }
 }
