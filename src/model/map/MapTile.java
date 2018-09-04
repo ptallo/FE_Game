@@ -1,6 +1,6 @@
 package model.map;
 
-import components.RenderComponent;
+import components.render.RenderComponent;
 
 public class MapTile {
 

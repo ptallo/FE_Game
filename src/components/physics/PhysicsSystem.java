@@ -1,43 +1,26 @@
-package components;
+package components.physics;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import model.Point;
 import model.map.Map;
 import model.map.MapTile;
-import model.unit.Unit;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PhysicsComponent {
-    private Point point;
-    private Integer travelDistance;
-
-    public PhysicsComponent(int x, int y, int travelDistance) {
-        this.point = new Point(x, y);
-        this.travelDistance = travelDistance;
-    }
-
-    public Point getPoint() {
-        return point;
-    }
-
-    public void setPoint(Point point, Map map, ArrayList<Unit> units) {
-        if (point.inCollection(getMovablePoints(map, units))) {
-            this.point = point;
+public class PhysicsSystem {
+    public void setPoint(PhysicsComponent component, Point point, Map map, List<PhysicsComponent> units) {
+        if (point.inCollection(getMovablePoints(component, map, units))) {
+            component.setPoint(point);
         }
     }
 
-    public ArrayList<Point> getMovablePoints(Map map, ArrayList<Unit> units) {
-        return getMovablePoints(map, units, travelDistance);
-    }
-
-    public ArrayList<Point> getMovablePoints(Map map, ArrayList<Unit> units, int distance) {
+    private ArrayList<Point> getMovablePoints(PhysicsComponent component, Map map, List<PhysicsComponent> units) {
         ArrayList<Point> points = new ArrayList<>();
-        points.add(point);
+        points.add(component.getPoint());
 
-        for (int i = distance; i > 0; i--) {
+        for (int i = component.getTravelDistance(); i > 0; i--) {
             ArrayList<Point> neighborsToAdd = new ArrayList<>();
             for (Point point : points) {
                 for (Point neighbor : point.getNeighbors()) {
@@ -49,14 +32,14 @@ public class PhysicsComponent {
             points.addAll(neighborsToAdd);
         }
 
-        points.remove(point);
+        points.remove(component.getPoint());
         return points;
     }
 
-    private boolean pointIsMovable(Map map, ArrayList<Unit> units, Point testPoint) {
+    private boolean pointIsMovable(Map map, List<PhysicsComponent> units, Point testPoint) {
         boolean unitAtPoint = false;
-        for (Unit unit : units) {
-            if (unit.getPhysicsComponent().getPoint().equals(testPoint)) {
+        for (PhysicsComponent unit : units) {
+            if (unit.getPoint().equals(testPoint)) {
                 unitAtPoint = true;
             }
         }
@@ -65,8 +48,8 @@ public class PhysicsComponent {
         return !unitAtPoint && tileAtPoint != null && tileAtPoint.getPassable();
     }
 
-    public void drawMovableArea(GraphicsContext gc, Map map, ArrayList<Unit> units) {
-        List<Point> movablePoints = getMovablePoints(map, units);
+    public void drawMovableArea(PhysicsComponent component, GraphicsContext gc, Map map, List<PhysicsComponent> units) {
+        List<Point> movablePoints = getMovablePoints(component, map, units);
         for (Point point : movablePoints) {
             gc.setFill(Color.rgb(0, 0, 255, 0.3));
             gc.fillRect(

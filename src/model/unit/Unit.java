@@ -1,10 +1,11 @@
 package model.unit;
 
-import components.CombatComponent;
-import components.PhysicsComponent;
-import components.RenderComponent;
+import components.combat.CombatComponent;
+import components.physics.PhysicsComponent;
+import components.render.RenderComponent;
+import model.ObjectInterface;
 
-public class Unit {
+public class Unit implements ObjectInterface {
     private RenderComponent renderComponent;
     private PhysicsComponent physicsComponent;
     private CombatComponent combatComponent;

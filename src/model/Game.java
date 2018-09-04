@@ -1,29 +1,35 @@
 package model;
 
+import components.combat.CombatSystem;
+import components.physics.PhysicsComponent;
+import components.physics.PhysicsSystem;
+import components.render.RenderSystem;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import model.cursor.Cursor;
 import model.cursor.SelectionIndicator;
 import model.map.Map;
-import model.unit.Unit;
 import model.unit.UnitEnum;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Game {
 
-    private Map map;
-    private Cursor cursor;
-    private SelectionIndicator selectionIndicator;
+    private RenderSystem renderSystem = new RenderSystem();
+    private PhysicsSystem physicsSystem = new PhysicsSystem();
+    private CombatSystem combatSystem = new CombatSystem();
 
-    private ArrayList<Unit> units;
-    private Unit selectedUnit;
+    private Map map = new Map();
+    private Cursor cursor = new Cursor();
+    private SelectionIndicator selectionIndicator = new SelectionIndicator();
+
+    private ArrayList<ObjectInterface> units;
+    private ObjectInterface selectedUnit;
 
     public Game() {
-        map = new Map();
-        cursor = new Cursor();
-        selectionIndicator = new SelectionIndicator();
         units = new ArrayList<>();
         units.add(UnitEnum.SPEARMAN.getUnitInstance(1, 3));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(1, 4));
@@ -44,28 +50,19 @@ public class Game {
     }
 
     private void handleEnterKey() {
-        //handle unit selection
-        Unit selectedUnit = null;
-        for (Unit unit : units) {
+        ObjectInterface selectedUnit = null;
+        for (ObjectInterface unit : units) {
             if (cursor.getSelectionPoint().equals(unit.getPhysicsComponent().getPoint())) {
                 selectedUnit = unit;
             }
         }
 
-        //handle unit movement
         if (this.selectedUnit != null) {
             if (selectedUnit == null) {
-                if (cursor.getSelectionPoint().inCollection(this.selectedUnit.getPhysicsComponent().getMovablePoints(map, units))) {
-                    this.selectedUnit.getPhysicsComponent().setPoint(cursor.getSelectionPoint().clone(), map, units);
-                }
+                List<PhysicsComponent> componentList = units.stream().map(ObjectInterface::getPhysicsComponent).collect(Collectors.toList());
+                physicsSystem.setPoint(this.selectedUnit.getPhysicsComponent(), cursor.getSelectionPoint(), map, componentList);
             } else {
-                this.selectedUnit.getCombatComponent().fight(selectedUnit.getCombatComponent());
-                if (selectedUnit.getCombatComponent().isDead()){
-                    units.remove(selectedUnit);
-                }
-                if (this.selectedUnit.getCombatComponent().isDead()){
-                    units.remove(this.selectedUnit);
-                }
+                combatSystem.completeCombat(this.selectedUnit, selectedUnit, units);
                 selectedUnit = null;
             }
         }
@@ -75,14 +72,19 @@ public class Game {
     public void draw(GraphicsContext gc) {
         map.draw(gc);
         if (selectedUnit != null) {
-            selectedUnit.getPhysicsComponent().drawMovableArea(gc, map, units);
-            selectionIndicator.getRenderComponent().draw(gc, selectedUnit.getPhysicsComponent().getPoint());
+            if (selectedUnit.getPhysicsComponent() != null) {
+                List<PhysicsComponent> componentList = units.stream().map(ObjectInterface::getPhysicsComponent).collect(Collectors.toList());
+                physicsSystem.drawMovableArea(selectedUnit.getPhysicsComponent(), gc, map, componentList);
+                renderSystem.draw(selectionIndicator.getRenderComponent(), gc, selectedUnit.getPhysicsComponent().getPoint());
+            }
         }
 
-        for (Unit unit : units) {
-            unit.getRenderComponent().draw(gc, unit.getPhysicsComponent().getPoint());
+        for (ObjectInterface unit : units) {
+            if (unit.getRenderComponent() != null) {
+                renderSystem.draw(unit.getRenderComponent(), gc, unit.getPhysicsComponent().getPoint());
+            }
         }
 
-        cursor.draw(gc);
+        renderSystem.draw(cursor.getRenderComponent(), gc, cursor.getSelectionPoint());
     }
 }

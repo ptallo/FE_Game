@@ -1,7 +1,6 @@
 package model.cursor;
 
-import components.RenderComponent;
-import model.Point;
+import components.render.RenderComponent;
 
 public class SelectionIndicator {
 
