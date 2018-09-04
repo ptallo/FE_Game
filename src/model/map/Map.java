@@ -30,19 +30,21 @@ public class Map {
     }
 
     public void draw(GraphicsContext gc){
-        for (int y = 0; y < mapTiles.size(); y++) {
-            for (int x = 0; x < mapTiles.get(y).size(); x++) {
-                renderSystem.draw(mapTiles.get(y).get(x).getRenderComponent(), gc, new Point(x, y));
+        for (ArrayList<MapTile> row : mapTiles) {
+            for (MapTile tile : row) {
+                renderSystem.draw(tile.getRenderComponent(), gc, tile.getPhysicsComponent().getPoint());
             }
         }
     }
 
     public void initMapTiles(ArrayList<String> mapDef) {
         mapTiles = new ArrayList<>();
-        for (String row : mapDef) {
+        for (int y = 0; y < mapDef.size(); y++){
             ArrayList<MapTile> newRow = new ArrayList<>();
-            for (char c : row.toCharArray()){
-                newRow.add(MapTileEnum.values()[Character.getNumericValue(c)].getMapTileInstance());
+            char[] row = mapDef.get(y).toCharArray();
+            for (int x = 0; x < row.length; x++){
+                int value = Character.getNumericValue(row[x]);
+                newRow.add(MapTileEnum.values()[value].getMapTileInstance(x, y));
             }
             mapTiles.add(newRow);
         }
