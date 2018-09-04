@@ -44,7 +44,9 @@ public class PhysicsSystem {
 
             for (MapTile tile : neighborTiles) {
                 int newCost = costSoFar.get(currentTile) + tile.getTravelCost();
-                if ((costSoFar.get(tile) == null || newCost < costSoFar.get(tile)) && newCost <= component.getTravelDistance()) {
+                if ((costSoFar.get(tile) == null || newCost < costSoFar.get(tile)) &&
+                        newCost <= component.getTravelDistance() &&
+                        pointIsMovable(map, units, tile.getPhysicsComponent().getPoint())) {
                     costSoFar.put(tile, newCost);
                     frontier.add(tile, newCost);
                     cameFrom.put(tile, currentTile);
@@ -70,7 +72,7 @@ public class PhysicsSystem {
         }
 
         MapTile tileAtPoint = map.getTileAtPoint(testPoint);
-        return !unitAtPoint && tileAtPoint != null && tileAtPoint.getTravelCost() < 99;
+        return !unitAtPoint && tileAtPoint != null;
     }
 
     public void drawMovableArea(PhysicsComponent component, GraphicsContext gc, Map map, List<PhysicsComponent> units) {

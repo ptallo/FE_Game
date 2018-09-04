@@ -31,7 +31,7 @@ public class Game {
 
     public Game() {
         units = new ArrayList<>();
-        units.add(UnitEnum.SPEARMAN.getUnitInstance(15, 0));
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(14, 5));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(1, 4));
     }
 
