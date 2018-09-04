@@ -12,7 +12,7 @@ public class Unit implements ObjectInterface {
 
     public Unit(String path, int x, int y) {
         renderComponent = new RenderComponent(path, 32, 32, 1000);
-        physicsComponent = new PhysicsComponent(x, y, 3);
+        physicsComponent = new PhysicsComponent(x, y, 7);
         combatComponent = new CombatComponent(10, 8);
     }
 

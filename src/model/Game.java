@@ -31,7 +31,7 @@ public class Game {
 
     public Game() {
         units = new ArrayList<>();
-        units.add(UnitEnum.SPEARMAN.getUnitInstance(1, 3));
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(15, 0));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(1, 4));
     }
 
@@ -57,7 +57,7 @@ public class Game {
             }
         }
 
-        if (this.selectedUnit != null) {
+        if (this.selectedUnit != null && selectedUnit != this.selectedUnit) {
             if (selectedUnit == null) {
                 List<PhysicsComponent> componentList = units.stream().map(ObjectInterface::getPhysicsComponent).collect(Collectors.toList());
                 physicsSystem.setPoint(this.selectedUnit.getPhysicsComponent(), cursor.getSelectionPoint(), map, componentList);
