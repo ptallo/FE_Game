@@ -1,5 +1,6 @@
 import javafx.animation.AnimationTimer;
 import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import model.Game;
@@ -11,14 +12,14 @@ public class GameScreen {
 
     private Game game;
 
-    public GameScreen(Game game, Group root) {
+    public GameScreen(Game game, Group root, double width, double height) {
         this.game = game;
-        initCanvas();
+        initCanvas(width, height);
         root.getChildren().add(canvas);
     }
 
-    private void initCanvas() {
-        canvas = new Canvas(600, 600);
+    private void initCanvas(double w, double h) {
+        canvas = new Canvas(w, h);
         gc = canvas.getGraphicsContext2D();
     }
 
