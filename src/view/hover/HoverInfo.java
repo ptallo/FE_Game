@@ -18,12 +18,9 @@ public abstract class HoverInfo<T> {
     abstract HashMap<String, String> getInfoHashMap(T item);
 
     public void showInfo(double x, double y, GraphicsContext gc, T item) {
-        HashMap<String, String> infoMap = getInfoHashMap(item);
-        ArrayList<String> infoKeys = getInfoKeys(item);
-
         double width = determineWidth(item);
         double height = determinHeight(item);
-        double xMargin = 6;
+        double xMargin = determineWidth(item) * 0.03;
 
         gc.setFill(Color.LIGHTGRAY);
         gc.fillRect(x, y, width, height);
@@ -34,7 +31,7 @@ public abstract class HoverInfo<T> {
 
         gc.setFill(new Color(0, 0, 0, 1));
         gc.setFont(font);
-        for (int i = 0; i < infoKeys.size(); i++) {
+        for (int i = 0; i < getInfoKeys(item).size(); i++) {
             String infoText = getString(i, item);
             gc.fillText(infoText, x + xMargin, y + ((i + 1) * (fontSize + textBuffer)), width - (xMargin * 2));
         }
