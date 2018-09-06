@@ -20,7 +20,6 @@ public class PhysicsSystem {
     }
 
     private ArrayList<Point> getMovablePoints(PhysicsComponent component, Map map, List<PhysicsComponent> units) {
-        ArrayList<Point> movablePoints = new ArrayList<>();
 
         HashMap<MapTile, Integer> costSoFar = new HashMap<>();
         HashMap<MapTile, MapTile> cameFrom = new HashMap<>();
@@ -54,13 +53,10 @@ public class PhysicsSystem {
             }
         }
 
-        movablePoints.addAll(
-                costSoFar.keySet().stream()
-                        .map(MapTile::getPhysicsComponent)
-                        .map(PhysicsComponent::getPoint)
-                        .collect(Collectors.toList())
-        );
-        return movablePoints;
+        return costSoFar.keySet().stream()
+                .map(MapTile::getPhysicsComponent)
+                .map(PhysicsComponent::getPoint)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private boolean pointIsMovable(Map map, List<PhysicsComponent> units, Point testPoint) {
