@@ -1,19 +1,20 @@
 package model.map;
 
 public enum MapTileEnum {
-    GRASSTILE("grasstile.png", true),
-    SANDTILE("sandtile.png", false);
+    GRASSTILE("grasstile.png", 1),
+    SANDTILE("sandtile.png", 99),
+    FOREST("forest.png", 3);
 
     private String path;
-    private Boolean passable;
+    private Integer travelCost;
 
-    MapTileEnum(String path, Boolean passable) {
+    MapTileEnum(String path, int travelCost) {
         this.path = path;
-        this.passable = passable;
+        this.travelCost = travelCost;
     }
 
-    public MapTile getMapTileInstance() {
-        return new MapTile(path, passable);
+    public MapTile getMapTileInstance(int x, int y) {
+        return new MapTile(path, travelCost, x, y);
     }
 }
 

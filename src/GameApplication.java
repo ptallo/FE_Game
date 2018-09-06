@@ -15,11 +15,11 @@ public class GameApplication extends Application {
         Scene scene = new Scene(root, primaryStage.getWidth(), primaryStage.getHeight(), Color.LIGHTGRAY);
         primaryStage.setScene(scene);
 
+        primaryStage.show();
+
         GameController controller = new GameController(primaryStage);
-        GameScreen screen = new GameScreen(controller.getGame(), root);
+        GameScreen screen = new GameScreen(controller.getGame(), root, primaryStage.getWidth(), primaryStage.getHeight());
 
         screen.initDrawLoop();
-
-        primaryStage.show();
     }
 }

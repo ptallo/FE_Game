@@ -5,9 +5,12 @@ import javafx.scene.paint.Color;
 import model.Point;
 import model.map.Map;
 import model.map.MapTile;
+import util.PriorityQueue;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PhysicsSystem {
     public void setPoint(PhysicsComponent component, Point point, Map map, List<PhysicsComponent> units) {
@@ -17,23 +20,43 @@ public class PhysicsSystem {
     }
 
     private ArrayList<Point> getMovablePoints(PhysicsComponent component, Map map, List<PhysicsComponent> units) {
-        ArrayList<Point> points = new ArrayList<>();
-        points.add(component.getPoint());
 
-        for (int i = component.getTravelDistance(); i > 0; i--) {
-            ArrayList<Point> neighborsToAdd = new ArrayList<>();
-            for (Point point : points) {
-                for (Point neighbor : point.getNeighbors()) {
-                    if (!neighbor.inCollection(points) && !neighbor.inCollection(neighborsToAdd) && pointIsMovable(map, units, neighbor)) {
-                        neighborsToAdd.add(neighbor);
-                    }
+        HashMap<MapTile, Integer> costSoFar = new HashMap<>();
+        HashMap<MapTile, MapTile> cameFrom = new HashMap<>();
+        PriorityQueue<MapTile> frontier = new PriorityQueue<>();
+
+        MapTile startTile = map.getTileAtPoint(component.getPoint());
+        costSoFar.put(startTile, 0);
+        cameFrom.put(startTile, null);
+        frontier.add(startTile, 0);
+
+        while (!frontier.isEmpty()) {
+            MapTile currentTile = frontier.get();
+
+            ArrayList<MapTile> neighborTiles = new ArrayList<>();
+            for (Point point : currentTile.getPhysicsComponent().getPoint().getNeighbors()) {
+                MapTile tileAtPoint = map.getTileAtPoint(point);
+                if (tileAtPoint != null) {
+                    neighborTiles.add(tileAtPoint);
                 }
             }
-            points.addAll(neighborsToAdd);
+
+            for (MapTile tile : neighborTiles) {
+                int newCost = costSoFar.get(currentTile) + tile.getTravelCost();
+                if ((costSoFar.get(tile) == null || newCost < costSoFar.get(tile)) &&
+                        newCost <= component.getTravelDistance() &&
+                        pointIsMovable(map, units, tile.getPhysicsComponent().getPoint())) {
+                    costSoFar.put(tile, newCost);
+                    frontier.add(tile, newCost);
+                    cameFrom.put(tile, currentTile);
+                }
+            }
         }
 
-        points.remove(component.getPoint());
-        return points;
+        return costSoFar.keySet().stream()
+                .map(MapTile::getPhysicsComponent)
+                .map(PhysicsComponent::getPoint)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private boolean pointIsMovable(Map map, List<PhysicsComponent> units, Point testPoint) {
@@ -45,7 +68,7 @@ public class PhysicsSystem {
         }
 
         MapTile tileAtPoint = map.getTileAtPoint(testPoint);
-        return !unitAtPoint && tileAtPoint != null && tileAtPoint.getPassable();
+        return !unitAtPoint && tileAtPoint != null;
     }
 
     public void drawMovableArea(PhysicsComponent component, GraphicsContext gc, Map map, List<PhysicsComponent> units) {
