@@ -7,9 +7,11 @@ import components.render.RenderSystem;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import model.cursor.Cursor;
 import model.cursor.SelectionIndicator;
 import model.map.Map;
+import model.map.MapTile;
 import model.unit.UnitEnum;
 import view.hover.MapTileHoverInfo;
 
@@ -35,6 +37,13 @@ public class Game {
         units = new ArrayList<>();
         units.add(UnitEnum.SPEARMAN.getUnitInstance(14, 5));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(1, 4));
+    }
+
+    public void handleMouseEvent(MouseEvent event) {
+        double xCoord = Math.floor((event.getX() - cursor.getxTransform()) / Map.Tile_Height);
+        double yCoord = Math.floor((event.getY() - cursor.getyTransform()) / Map.Tile_Height);
+        Point point = new Point((int) xCoord, (int) yCoord);
+        cursor.setPoint(point, map);
     }
 
     public void handleKeyEvent(KeyEvent event) {

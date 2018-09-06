@@ -7,12 +7,34 @@ import model.map.Map;
 
 public class Cursor {
 
+    private double xTransform = 0;
+    private double yTransform = 0;
+
     private Point selectionPoint;
     private RenderComponent renderComponent;
 
     public Cursor() {
         selectionPoint = new Point(0, 0);
         renderComponent = new RenderComponent("selection_cursor.png", 32, 32, 1000);
+    }
+
+    public void setPoint(Point point, Map map) {
+        int xTileCount = map.getMapTiles().get(0).size();
+        int yTileCount = map.getMapTiles().size();
+
+        if (point.getX() < 0) {
+            point.setX(0);
+        } else if (point.getX() > xTileCount - 1) {
+            point.setY(xTileCount - 1);
+        }
+
+        if (point.getY() < 0) {
+            point.setY(0);
+        } else if (point.getY() > yTileCount - 1) {
+            point.setY(yTileCount - 1);
+        }
+
+        selectionPoint = point;
     }
 
     public void movePoint(int x, int y, Map map) {
@@ -55,6 +77,9 @@ public class Cursor {
         } else if (maxY < selectionPoint.getRealY()) {
             gc.setTransform(1, 0, 0, 1, gc.getTransform().getTx(), gc.getTransform().getTy() - Map.Tile_Height);
         }
+
+        xTransform = gc.getTransform().getTx();
+        yTransform = gc.getTransform().getTy();
     }
 
     public RenderComponent getRenderComponent() {
@@ -63,5 +88,13 @@ public class Cursor {
 
     public Point getSelectionPoint() {
         return selectionPoint;
+    }
+
+    public double getxTransform() {
+        return xTransform;
+    }
+
+    public double getyTransform() {
+        return yTransform;
     }
 }

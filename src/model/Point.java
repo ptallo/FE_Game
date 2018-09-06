@@ -21,12 +21,20 @@ public class Point {
         return x;
     }
 
+    public void setX(Integer x) {
+        this.x = x;
+    }
+
     public double getRealX() {
         return x * Map.Tile_Width;
     }
 
     public Integer getY() {
         return y;
+    }
+
+    public void setY(Integer y) {
+        this.y = y;
     }
 
     public double getRealY() {
