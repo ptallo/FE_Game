@@ -1,5 +1,9 @@
 package model;
 
+import model.map.Map;
+import model.map.MapTile;
+import model.map.MapTileEnum;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -17,8 +21,16 @@ public class Point {
         return x;
     }
 
+    public double getRealX() {
+        return x * Map.Tile_Width;
+    }
+
     public Integer getY() {
         return y;
+    }
+
+    public double getRealY() {
+        return y * Map.Tile_Height;
     }
 
     public boolean equals(Point point) {

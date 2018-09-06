@@ -71,7 +71,10 @@ public class Game {
         this.selectedUnit = selectedUnit;
     }
 
-    public void draw(GraphicsContext gc) {
+    public void draw(GraphicsContext gc, double w, double h) {
+        cursor.handleTransform(gc, w, h);
+        gc.clearRect(-gc.getTransform().getTx(), -gc.getTransform().getTy(), w, h);
+
         map.draw(gc);
         if (selectedUnit != null) {
             if (selectedUnit.getPhysicsComponent() != null) {
@@ -90,4 +93,5 @@ public class Game {
         renderSystem.draw(cursor.getRenderComponent(), gc, cursor.getSelectionPoint());
         mapTileHoverInfo.showInfo(10, 10, gc, map.getTileAtPoint(cursor.getSelectionPoint()));
     }
+
 }

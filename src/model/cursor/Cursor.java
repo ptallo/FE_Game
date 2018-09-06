@@ -1,6 +1,7 @@
 package model.cursor;
 
 import components.render.RenderComponent;
+import javafx.scene.canvas.GraphicsContext;
 import model.Point;
 import model.map.Map;
 
@@ -12,10 +13,6 @@ public class Cursor {
     public Cursor() {
         selectionPoint = new Point(0, 0);
         renderComponent = new RenderComponent("selection_cursor.png", 32, 32, 1000);
-    }
-
-    public RenderComponent getRenderComponent() {
-        return renderComponent;
     }
 
     public void movePoint(int x, int y, Map map) {
@@ -38,6 +35,30 @@ public class Cursor {
         }
 
         selectionPoint = new Point(newX, newY);
+    }
+
+    public void handleTransform(GraphicsContext gc, double w, double h) {
+        double minX = -gc.getTransform().getTx();
+        double maxX = minX + Math.floor(w / Map.Tile_Width) * Map.Tile_Width - Map.Tile_Width;
+
+        double minY = -gc.getTransform().getTy();
+        double maxY = minY + Math.floor(h / Map.Tile_Height) * Map.Tile_Height - Map.Tile_Height;
+
+        if (minX > selectionPoint.getRealX()) {
+            gc.setTransform(1, 0, 0, 1, gc.getTransform().getTx() + Map.Tile_Width, gc.getTransform().getTy());
+        } else if (maxX < selectionPoint.getRealX()) {
+            gc.setTransform(1, 0, 0, 1, gc.getTransform().getTx() - Map.Tile_Width, gc.getTransform().getTy());
+        }
+
+        if (minY > selectionPoint.getRealY()) {
+            gc.setTransform(1, 0, 0, 1, gc.getTransform().getTx(), gc.getTransform().getTy() + Map.Tile_Height);
+        } else if (maxY < selectionPoint.getRealY()) {
+            gc.setTransform(1, 0, 0, 1, gc.getTransform().getTx(), gc.getTransform().getTy() - Map.Tile_Height);
+        }
+    }
+
+    public RenderComponent getRenderComponent() {
+        return renderComponent;
     }
 
     public Point getSelectionPoint() {
