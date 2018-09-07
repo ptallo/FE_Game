@@ -1,7 +1,5 @@
 package components.combat;
 
-import model.Game;
-
 public class CombatComponent {
 
     private int healthCap;
@@ -18,8 +16,8 @@ public class CombatComponent {
         this.damage = damage;
     }
 
-    public int getDamage() {
-        return damage;
+    public int getHealthCap() {
+        return healthCap;
     }
 
     public int getCurrentHealth() {
@@ -28,6 +26,10 @@ public class CombatComponent {
 
     public void setCurrentHealth(int currentHealth) {
         this.currentHealth = currentHealth;
+    }
+
+    public int getDamage() {
+        return damage;
     }
 
     public boolean isAlive() {

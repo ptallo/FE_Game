@@ -7,10 +7,15 @@ import components.render.RenderSystem;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import model.cursor.Cursor;
 import model.cursor.SelectionIndicator;
 import model.map.Map;
+import model.map.MapTile;
+import model.unit.Unit;
 import model.unit.UnitEnum;
+import view.hover.MapTileHoverInfo;
+import view.hover.UnitHoverInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,14 +30,26 @@ public class Game {
     private Map map = new Map();
     private Cursor cursor = new Cursor();
     private SelectionIndicator selectionIndicator = new SelectionIndicator();
+    private MapTileHoverInfo mapTileHoverInfo;
+    private UnitHoverInfo unitHoverInfo;
 
     private ArrayList<ObjectInterface> units;
     private ObjectInterface selectedUnit;
 
     public Game() {
+        mapTileHoverInfo = new MapTileHoverInfo(cursor, true, false);
+        unitHoverInfo = new UnitHoverInfo(cursor, true, true);
         units = new ArrayList<>();
         units.add(UnitEnum.SPEARMAN.getUnitInstance(14, 5));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(1, 4));
+    }
+
+    public void handleMouseEvent(MouseEvent event) {
+        double xCoord = Math.floor((event.getX() - cursor.getxTransform()) / Map.Tile_Height);
+        double yCoord = Math.floor((event.getY() - cursor.getyTransform()) / Map.Tile_Height);
+        Point point = new Point((int) xCoord, (int) yCoord);
+        cursor.setPoint(point, map);
+        handleEnterKey();
     }
 
     public void handleKeyEvent(KeyEvent event) {
@@ -69,7 +86,10 @@ public class Game {
         this.selectedUnit = selectedUnit;
     }
 
-    public void draw(GraphicsContext gc) {
+    public void draw(GraphicsContext gc, double w, double h) {
+        cursor.handleTransform(gc, w, h);
+        gc.clearRect(-gc.getTransform().getTx(), -gc.getTransform().getTy(), w, h);
+
         map.draw(gc);
         if (selectedUnit != null) {
             if (selectedUnit.getPhysicsComponent() != null) {
@@ -86,5 +106,10 @@ public class Game {
         }
 
         renderSystem.draw(cursor.getRenderComponent(), gc, cursor.getSelectionPoint());
+        mapTileHoverInfo.showInfo(w, h, gc, map.getTileAtPoint(cursor.getSelectionPoint()));
+        if (this.selectedUnit != null) {
+            unitHoverInfo.showInfo(w, h, gc, (Unit) this.selectedUnit);
+        }
     }
+
 }

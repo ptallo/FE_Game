@@ -1,6 +1,7 @@
+package view;
+
 import javafx.animation.AnimationTimer;
 import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import model.Game;
@@ -28,7 +29,7 @@ public class GameScreen {
             @Override
             public void handle(long now) {
                 if (game != null) {
-                    game.draw(gc);
+                    game.draw(gc, canvas.getWidth(), canvas.getHeight());
                 }
             }
         }.start();
