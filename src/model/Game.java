@@ -12,8 +12,10 @@ import model.cursor.Cursor;
 import model.cursor.SelectionIndicator;
 import model.map.Map;
 import model.map.MapTile;
+import model.unit.Unit;
 import model.unit.UnitEnum;
 import view.hover.MapTileHoverInfo;
+import view.hover.UnitHoverInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,12 +31,14 @@ public class Game {
     private Cursor cursor = new Cursor();
     private SelectionIndicator selectionIndicator = new SelectionIndicator();
     private MapTileHoverInfo mapTileHoverInfo;
+    private UnitHoverInfo unitHoverInfo;
 
     private ArrayList<ObjectInterface> units;
     private ObjectInterface selectedUnit;
 
     public Game() {
         mapTileHoverInfo = new MapTileHoverInfo(cursor, true, false);
+        unitHoverInfo = new UnitHoverInfo(cursor, true, true);
         units = new ArrayList<>();
         units.add(UnitEnum.SPEARMAN.getUnitInstance(14, 5));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(1, 4));
@@ -103,6 +107,9 @@ public class Game {
 
         renderSystem.draw(cursor.getRenderComponent(), gc, cursor.getSelectionPoint());
         mapTileHoverInfo.showInfo(w, h, gc, map.getTileAtPoint(cursor.getSelectionPoint()));
+        if (this.selectedUnit != null) {
+            unitHoverInfo.showInfo(w, h, gc, (Unit) this.selectedUnit);
+        }
     }
 
 }

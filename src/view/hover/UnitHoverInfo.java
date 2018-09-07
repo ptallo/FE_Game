@@ -13,11 +13,21 @@ public class UnitHoverInfo extends HoverInfo<Unit> {
 
     @Override
     ArrayList<String> getInfoKeys(Unit item) {
-        return null;
+        ArrayList<String> nameArrayList = new ArrayList<>();
+        nameArrayList.add("Tile Name");
+        nameArrayList.add("Total Health");
+        nameArrayList.add("Current Health");
+        nameArrayList.add("Damage");
+        return nameArrayList;
     }
 
     @Override
     HashMap<String, String> getInfoHashMap(Unit item) {
-        return null;
+        HashMap<String, String> infoHashMap = new HashMap<>();
+        infoHashMap.put("Tile Name", item.getName());
+        infoHashMap.put("Total Health", String.valueOf(item.getCombatComponent().getHealthCap()));
+        infoHashMap.put("Current Health", String.valueOf(item.getCombatComponent().getCurrentHealth()));
+        infoHashMap.put("Damage", String.valueOf(item.getCombatComponent().getDamage()));
+        return infoHashMap;
     }
 }
