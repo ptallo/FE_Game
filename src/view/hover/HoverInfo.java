@@ -12,7 +12,7 @@ public abstract class HoverInfo<T> {
 
     private final int fontSize = 14;
     private final int textBuffer = 6;
-    private final Font font = new Font("Arial", fontSize);
+    private final Font font = new Font("Monospaced", fontSize);
 
     abstract ArrayList<String> getInfoKeys(T item);
     abstract HashMap<String, String> getInfoHashMap(T item);
