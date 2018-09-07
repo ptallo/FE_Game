@@ -44,6 +44,7 @@ public class Game {
         double yCoord = Math.floor((event.getY() - cursor.getyTransform()) / Map.Tile_Height);
         Point point = new Point((int) xCoord, (int) yCoord);
         cursor.setPoint(point, map);
+        handleEnterKey();
     }
 
     public void handleKeyEvent(KeyEvent event) {

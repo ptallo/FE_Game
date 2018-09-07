@@ -18,22 +18,24 @@ public abstract class HoverInfo<T> {
     abstract HashMap<String, String> getInfoHashMap(T item);
 
     public void showInfo(double x, double y, GraphicsContext gc, T item) {
+        double newX = x - gc.getTransform().getTx();
+        double newY = y - gc.getTransform().getTy();
         double width = determineWidth(item);
         double height = determinHeight(item);
         double xMargin = determineWidth(item) * 0.03;
 
         gc.setFill(Color.LIGHTGRAY);
-        gc.fillRect(x, y, width, height);
+        gc.fillRect(newX, newY, width, height);
 
         gc.setLineWidth(3);
         gc.setStroke(Color.GRAY);
-        gc.strokeRect(x, y, width, height);
+        gc.strokeRect(newX, newY, width, height);
 
         gc.setFill(new Color(0, 0, 0, 1));
         gc.setFont(font);
         for (int i = 0; i < getInfoKeys(item).size(); i++) {
             String infoText = getString(i, item);
-            gc.fillText(infoText, x + xMargin, y + ((i + 1) * (fontSize + textBuffer)), width - (xMargin * 2));
+            gc.fillText(infoText, newX + xMargin, newY + ((i + 1) * (fontSize + textBuffer)), width - (xMargin * 2));
         }
     }
 
