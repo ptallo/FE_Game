@@ -1,11 +1,16 @@
 package view.hover;
 
+import model.cursor.Cursor;
 import model.map.MapTile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MapTileHoverInfo extends HoverInfo<MapTile>{
+    public MapTileHoverInfo(Cursor cursor) {
+        super(cursor, true);
+    }
+
     @Override
     ArrayList<String> getInfoKeys(MapTile item) {
         ArrayList<String> nameArrayList = new ArrayList<>();

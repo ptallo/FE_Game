@@ -28,12 +28,13 @@ public class Game {
     private Map map = new Map();
     private Cursor cursor = new Cursor();
     private SelectionIndicator selectionIndicator = new SelectionIndicator();
-    private MapTileHoverInfo mapTileHoverInfo = new MapTileHoverInfo();
+    private MapTileHoverInfo mapTileHoverInfo;
 
     private ArrayList<ObjectInterface> units;
     private ObjectInterface selectedUnit;
 
     public Game() {
+        mapTileHoverInfo = new MapTileHoverInfo(cursor);
         units = new ArrayList<>();
         units.add(UnitEnum.SPEARMAN.getUnitInstance(14, 5));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(1, 4));
@@ -101,7 +102,7 @@ public class Game {
         }
 
         renderSystem.draw(cursor.getRenderComponent(), gc, cursor.getSelectionPoint());
-        mapTileHoverInfo.showInfo(10, 10, gc, map.getTileAtPoint(cursor.getSelectionPoint()));
+        mapTileHoverInfo.showInfo(true, false, w, h, gc, map.getTileAtPoint(cursor.getSelectionPoint()));
     }
 
 }
