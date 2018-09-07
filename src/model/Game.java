@@ -87,7 +87,7 @@ public class Game {
             if (hoveredUnit == null) {
                 List<PhysicsComponent> componentList = units.stream().map(ObjectInterface::getPhysicsComponent).collect(Collectors.toList());
                 physicsSystem.setPoint(selectedUnit.getPhysicsComponent(), cursor.getSelectionPoint(), map, componentList);
-            } else {
+            } else if (selectedUnit.getCombatComponent() != null && hoveredUnit.getCombatComponent() != null) {
                 combatSystem.completeCombat(selectedUnit, hoveredUnit, units);
                 selectedUnit = null;
             }
