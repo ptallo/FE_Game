@@ -35,6 +35,7 @@ public class Game {
 
     private ArrayList<ObjectInterface> units;
     private ObjectInterface selectedUnit;
+    private ObjectInterface hoveredUnit;
 
     public Game() {
         mapTileHoverInfo = new MapTileHoverInfo(cursor, true, false);
@@ -49,41 +50,49 @@ public class Game {
         double yCoord = Math.floor((event.getY() - cursor.getyTransform()) / Map.Tile_Height);
         Point point = new Point((int) xCoord, (int) yCoord);
         cursor.setPoint(point, map);
+        handleMouseMoved();
         handleEnterKey();
     }
 
     public void handleKeyEvent(KeyEvent event) {
-        if (event.getCode() == KeyCode.UP){
+        if (event.getCode() == KeyCode.UP) {
             cursor.movePoint(0, -1, map);
+            handleMouseMoved();
         } else if (event.getCode() == KeyCode.DOWN) {
             cursor.movePoint(0, 1, map);
+            handleMouseMoved();
         } else if (event.getCode() == KeyCode.LEFT) {
             cursor.movePoint(-1, 0, map);
+            handleMouseMoved();
         } else if (event.getCode() == KeyCode.RIGHT) {
             cursor.movePoint(1, 0, map);
+            handleMouseMoved();
         } else if (event.getCode() == KeyCode.ENTER) {
             handleEnterKey();
         }
     }
 
-    private void handleEnterKey() {
-        ObjectInterface selectedUnit = null;
+    private void handleMouseMoved() {
+        ObjectInterface hoveredUnit = null;
         for (ObjectInterface unit : units) {
             if (cursor.getSelectionPoint().equals(unit.getPhysicsComponent().getPoint())) {
-                selectedUnit = unit;
+                hoveredUnit = unit;
             }
         }
+        this.hoveredUnit = hoveredUnit;
+    }
 
-        if (this.selectedUnit != null && selectedUnit != this.selectedUnit) {
-            if (selectedUnit == null) {
+    private void handleEnterKey() {
+        if (selectedUnit != null && hoveredUnit != selectedUnit) {
+            if (hoveredUnit == null) {
                 List<PhysicsComponent> componentList = units.stream().map(ObjectInterface::getPhysicsComponent).collect(Collectors.toList());
-                physicsSystem.setPoint(this.selectedUnit.getPhysicsComponent(), cursor.getSelectionPoint(), map, componentList);
+                physicsSystem.setPoint(selectedUnit.getPhysicsComponent(), cursor.getSelectionPoint(), map, componentList);
             } else {
-                combatSystem.completeCombat(this.selectedUnit, selectedUnit, units);
+                combatSystem.completeCombat(selectedUnit, hoveredUnit, units);
                 selectedUnit = null;
             }
         }
-        this.selectedUnit = selectedUnit;
+        this.selectedUnit = hoveredUnit;
     }
 
     public void draw(GraphicsContext gc, double w, double h) {
@@ -109,6 +118,9 @@ public class Game {
         mapTileHoverInfo.showInfo(w, h, gc, map.getTileAtPoint(cursor.getSelectionPoint()));
         if (this.selectedUnit != null) {
             unitHoverInfo.showInfo(w, h, gc, (Unit) this.selectedUnit);
+        } else if (this.hoveredUnit != null) {
+            unitHoverInfo.showInfo(w, h, gc, (Unit) this.hoveredUnit);
+
         }
     }
 
