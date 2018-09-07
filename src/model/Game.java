@@ -34,7 +34,7 @@ public class Game {
     private ObjectInterface selectedUnit;
 
     public Game() {
-        mapTileHoverInfo = new MapTileHoverInfo(cursor);
+        mapTileHoverInfo = new MapTileHoverInfo(cursor, true, false);
         units = new ArrayList<>();
         units.add(UnitEnum.SPEARMAN.getUnitInstance(14, 5));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(1, 4));
@@ -102,7 +102,7 @@ public class Game {
         }
 
         renderSystem.draw(cursor.getRenderComponent(), gc, cursor.getSelectionPoint());
-        mapTileHoverInfo.showInfo(true, false, w, h, gc, map.getTileAtPoint(cursor.getSelectionPoint()));
+        mapTileHoverInfo.showInfo(w, h, gc, map.getTileAtPoint(cursor.getSelectionPoint()));
     }
 
 }

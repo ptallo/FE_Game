@@ -18,17 +18,21 @@ public abstract class HoverInfo<T> {
     private final Font font = new Font("Monospaced", fontSize);
     private Cursor cursor;
     private boolean reflectable;
+    private boolean left;
+    private boolean top;
 
     abstract ArrayList<String> getInfoKeys(T item);
     abstract HashMap<String, String> getInfoHashMap(T item);
 
-    public HoverInfo(Cursor cursor, boolean reflectable) {
+    public HoverInfo(Cursor cursor, boolean reflectable, boolean left, boolean top) {
         this.cursor = cursor;
         this.reflectable = reflectable;
+        this.left = left;
+        this.top = top;
     }
 
-    public void showInfo(boolean left, boolean top, double w, double h, GraphicsContext gc, T item) {
-        Rectangle infoRect = getInfoRectangle(left, top, w, h, gc, item);
+    public void showInfo(double w, double h, GraphicsContext gc, T item) {
+        Rectangle infoRect = getInfoRectangle(w, h, gc, item);
         double xMargin = determineWidth(item) * 0.03;
 
         gc.setFill(Color.LIGHTGRAY);
@@ -46,7 +50,7 @@ public abstract class HoverInfo<T> {
         }
     }
 
-    public Rectangle getInfoRectangle(boolean left, boolean top, double w, double h, GraphicsContext gc, T item) {
+    public Rectangle getInfoRectangle(double w, double h, GraphicsContext gc, T item) {
         double width = determineWidth(item);
         double height = determineHeight(item);
         double margin = 0.02;

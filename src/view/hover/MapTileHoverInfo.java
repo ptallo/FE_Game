@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MapTileHoverInfo extends HoverInfo<MapTile>{
-    public MapTileHoverInfo(Cursor cursor) {
-        super(cursor, true);
+    public MapTileHoverInfo(Cursor cursor, boolean left, boolean top) {
+        super(cursor, true, left, top);
     }
 
     @Override
