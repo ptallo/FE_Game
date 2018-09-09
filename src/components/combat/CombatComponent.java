@@ -6,14 +6,14 @@ public class CombatComponent {
     private int currentHealth;
     private Weapon weapon;
 
-    public CombatComponent(int healthCap) {
+    public CombatComponent(int healthCap, Weapon weapon) {
         if (healthCap < 1) {
             this.healthCap = 1;
         } else {
             this.healthCap = healthCap;
         }
         this.currentHealth = healthCap;
-        this.weapon = WeaponEnum.SWORD.getInstance();
+        this.weapon = weapon;
     }
 
     public Weapon getWeapon() {
