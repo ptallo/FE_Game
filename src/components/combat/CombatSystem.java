@@ -19,20 +19,22 @@ public class CombatSystem {
 
     private void fight(CombatComponent attacker, CombatComponent defender) {
         //return -1 if attacker died, 0 if neither died and 1 if defender died
-        takeDamage(defender, attacker.getDamage());
+        takeDamage(defender, attacker);
 
         if (defender.isDead()) {
             return;
         }
 
-        takeDamage(attacker, defender.getDamage());
+        takeDamage(attacker, defender);
     }
 
-    private void takeDamage(CombatComponent component, int amount){
-        int newHealth = component.getCurrentHealth() - amount;
-        if (newHealth <= 0) {
-            newHealth = 0;
+    private void takeDamage(CombatComponent defender, CombatComponent attacker){
+        if (attacker.getWeapon() != null) {
+            int newHealth = defender.getCurrentHealth() - attacker.getWeapon().getDamage();
+            if (newHealth <= 0) {
+                newHealth = 0;
+            }
+            defender.setCurrentHealth(newHealth);
         }
-        component.setCurrentHealth(newHealth);
     }
 }

@@ -1,25 +1,27 @@
 package components.combat;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 public class CombatComponent {
 
     private int healthCap;
     private int currentHealth;
-    private int damage;
-    private ArrayList<Integer> attackRanges;
+    private Weapon weapon;
 
-    public CombatComponent(int healthCap, int damage, Integer... ranges) {
+    public CombatComponent(int healthCap) {
         if (healthCap < 1) {
             this.healthCap = 1;
         } else {
             this.healthCap = healthCap;
         }
         this.currentHealth = healthCap;
-        this.damage = damage;
-        attackRanges = new ArrayList<>();
-        attackRanges.addAll(Arrays.asList(ranges));
+        this.weapon = WeaponEnum.SWORD.getInstance();
+    }
+
+    public Weapon getWeapon() {
+        return weapon;
+    }
+
+    public void setWeapon(Weapon weapon) {
+        this.weapon = weapon;
     }
 
     public int getHealthCap() {
@@ -32,10 +34,6 @@ public class CombatComponent {
 
     public void setCurrentHealth(int currentHealth) {
         this.currentHealth = currentHealth;
-    }
-
-    public int getDamage() {
-        return damage;
     }
 
     public boolean isAlive() {
