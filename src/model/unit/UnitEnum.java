@@ -1,5 +1,7 @@
 package model.unit;
 
+import model.Player;
+
 public enum UnitEnum {
     SPEARMAN("spearman.png");
 
@@ -9,7 +11,7 @@ public enum UnitEnum {
         this.path = path;
     }
 
-    public Unit getUnitInstance(int x, int y) {
-        return new Unit(path, x, y);
+    public Unit getUnitInstance(Player owner, int x, int y) {
+        return new Unit(path, owner, x, y);
     }
 }

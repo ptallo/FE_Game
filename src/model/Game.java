@@ -7,7 +7,6 @@ import components.render.RenderSystem;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import model.cursor.Cursor;
 import model.cursor.SelectionIndicator;
 import model.map.Map;
@@ -47,39 +46,31 @@ public class Game {
 
         mapTileHoverInfo = new MapTileHoverInfo(cursor, true, false);
         unitHoverInfo = new UnitHoverInfo(cursor, true, true);
-        units = new ArrayList<>();
-        units.add(UnitEnum.SPEARMAN.getUnitInstance(14, 5));
-        units.add(UnitEnum.SPEARMAN.getUnitInstance(1, 4));
-    }
 
-    public void handleMouseEvent(MouseEvent event) {
-        double xCoord = Math.floor((event.getX() - cursor.getxTransform()) / Map.Tile_Height);
-        double yCoord = Math.floor((event.getY() - cursor.getyTransform()) / Map.Tile_Height);
-        Point point = new Point((int) xCoord, (int) yCoord);
-        cursor.setPoint(point, map);
-        handleMouseMoved();
-        handleEnterKey();
+        units = new ArrayList<>();
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(user, 14, 5));
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 4));
     }
 
     public void handleKeyEvent(KeyEvent event) {
         if (event.getCode() == KeyCode.UP) {
             cursor.movePoint(0, -1, map);
-            handleMouseMoved();
+            handleCursorMoved();
         } else if (event.getCode() == KeyCode.DOWN) {
             cursor.movePoint(0, 1, map);
-            handleMouseMoved();
+            handleCursorMoved();
         } else if (event.getCode() == KeyCode.LEFT) {
             cursor.movePoint(-1, 0, map);
-            handleMouseMoved();
+            handleCursorMoved();
         } else if (event.getCode() == KeyCode.RIGHT) {
             cursor.movePoint(1, 0, map);
-            handleMouseMoved();
+            handleCursorMoved();
         } else if (event.getCode() == KeyCode.ENTER) {
             handleEnterKey();
         }
     }
 
-    private void handleMouseMoved() {
+    private void handleCursorMoved() {
         Unit hoveredUnit = null;
         for (Unit unit : units) {
             if (cursor.getSelectionPoint().equals(unit.getPhysicsComponent().getPoint())) {
