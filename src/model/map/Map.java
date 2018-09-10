@@ -2,7 +2,7 @@ package model.map;
 
 import components.render.RenderSystem;
 import javafx.scene.canvas.GraphicsContext;
-import model.Point;
+import util.Point;
 
 import java.util.ArrayList;
 

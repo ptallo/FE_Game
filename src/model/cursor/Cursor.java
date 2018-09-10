@@ -2,7 +2,7 @@ package model.cursor;
 
 import components.render.RenderComponent;
 import javafx.scene.canvas.GraphicsContext;
-import model.Point;
+import util.Point;
 import model.map.Map;
 
 public class Cursor {

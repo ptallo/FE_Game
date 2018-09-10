@@ -12,10 +12,10 @@ import model.cursor.SelectionIndicator;
 import model.map.Map;
 import model.unit.Unit;
 import model.unit.UnitEnum;
-import view.hover.MapTileHoverInfo;
-import view.hover.UnitHoverInfo;
+import view.hover.InfoItem;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,22 +28,23 @@ public class Game {
     private Map map = new Map();
     private Cursor cursor = new Cursor();
     private SelectionIndicator selectionIndicator = new SelectionIndicator();
+    private InfoItem playerTurnInfoItem = new InfoItem();
 
     private ArrayList<Unit> units;
     private Unit selectedUnit;
     private Unit hoveredUnit;
 
     private ArrayList<Player> players;
-    private Player user;
+    private Player currentPlayer;
 
     public Game() {
         players = new ArrayList<>();
-        user = new Player();
-        players.add(user);
+        currentPlayer = new Player();
+        players.add(currentPlayer);
         players.add(new Player());
 
         units = new ArrayList<>();
-        units.add(UnitEnum.SPEARMAN.getUnitInstance(user, 14, 5));
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(currentPlayer, 14, 5));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 4));
     }
 
@@ -109,6 +110,10 @@ public class Game {
         }
 
         renderSystem.draw(cursor.getRenderComponent(), gc, cursor.getSelectionPoint());
+
+        HashMap<String, String> playerMap = new HashMap<>();
+        playerMap.put("Player", String.valueOf(players.indexOf(currentPlayer) + 1));
+        playerTurnInfoItem.showInfo(w * 0.02, w * 0.02, gc, playerMap);
     }
 
 }

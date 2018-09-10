@@ -1,6 +1,6 @@
 package components.physics;
 
-import model.Point;
+import util.Point;
 
 public class PhysicsComponent {
     private Point point;
