@@ -12,7 +12,7 @@ import model.cursor.SelectionIndicator;
 import model.map.Map;
 import model.unit.Unit;
 import model.unit.UnitEnum;
-import view.hover.InfoItem;
+import view.InfoItem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
