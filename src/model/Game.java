@@ -11,7 +11,6 @@ import javafx.scene.input.MouseEvent;
 import model.cursor.Cursor;
 import model.cursor.SelectionIndicator;
 import model.map.Map;
-import model.map.MapTile;
 import model.unit.Unit;
 import model.unit.UnitEnum;
 import view.hover.MapTileHoverInfo;
@@ -104,6 +103,7 @@ public class Game {
             if (selectedUnit.getPhysicsComponent() != null) {
                 List<PhysicsComponent> componentList = units.stream().map(ObjectInterface::getPhysicsComponent).collect(Collectors.toList());
                 physicsSystem.drawMovableArea(selectedUnit.getPhysicsComponent(), gc, map, componentList);
+                combatSystem.drawAttackableArea(gc, selectedUnit, map, units);
                 renderSystem.draw(selectionIndicator.getRenderComponent(), gc, selectedUnit.getPhysicsComponent().getPoint());
             }
         }
