@@ -28,8 +28,6 @@ public class Game {
     private Map map = new Map();
     private Cursor cursor = new Cursor();
     private SelectionIndicator selectionIndicator = new SelectionIndicator();
-    private MapTileHoverInfo mapTileHoverInfo;
-    private UnitHoverInfo unitHoverInfo;
 
     private ArrayList<Unit> units;
     private Unit selectedUnit;
@@ -43,9 +41,6 @@ public class Game {
         user = new Player();
         players.add(user);
         players.add(new Player());
-
-        mapTileHoverInfo = new MapTileHoverInfo(cursor, true, false);
-        unitHoverInfo = new UnitHoverInfo(cursor, true, true);
 
         units = new ArrayList<>();
         units.add(UnitEnum.SPEARMAN.getUnitInstance(user, 14, 5));
@@ -114,13 +109,6 @@ public class Game {
         }
 
         renderSystem.draw(cursor.getRenderComponent(), gc, cursor.getSelectionPoint());
-        mapTileHoverInfo.showInfo(w, h, gc, map.getTileAtPoint(cursor.getSelectionPoint()));
-        if (this.selectedUnit != null) {
-            unitHoverInfo.showInfo(w, h, gc, selectedUnit);
-        } else if (this.hoveredUnit != null) {
-            unitHoverInfo.showInfo(w, h, gc, hoveredUnit);
-
-        }
     }
 
 }
