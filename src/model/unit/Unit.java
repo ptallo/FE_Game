@@ -25,6 +25,10 @@ public class Unit {
         return name;
     }
 
+    public Player getOwner() {
+        return owner;
+    }
+
     public RenderComponent getRenderComponent() {
         return renderComponent;
     }

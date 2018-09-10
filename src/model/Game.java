@@ -31,6 +31,7 @@ public class Game {
     private InfoItem playerTurnInfoItem = new InfoItem();
 
     private ArrayList<Unit> units;
+    private ArrayList<Unit> currentPlayerUnitsLeft;
     private Unit selectedUnit;
     private Unit hoveredUnit;
 
@@ -46,6 +47,10 @@ public class Game {
         units = new ArrayList<>();
         units.add(UnitEnum.SPEARMAN.getUnitInstance(currentPlayer, 14, 5));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 4));
+
+        currentPlayerUnitsLeft = units.stream()
+                .filter(unit -> unit.getOwner().getUuid().equals(currentPlayer.getUuid()))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public void handleKeyEvent(KeyEvent event) {
@@ -64,11 +69,12 @@ public class Game {
         } else if (event.getCode() == KeyCode.ENTER) {
             handleEnterKey();
         }
+        checkChangeTurn();
     }
 
     private void handleCursorMoved() {
         Unit hoveredUnit = null;
-        for (Unit unit : units) {
+        for (Unit unit : currentPlayerUnitsLeft) {
             if (cursor.getSelectionPoint().equals(unit.getPhysicsComponent().getPoint())) {
                 hoveredUnit = unit;
             }
@@ -83,10 +89,28 @@ public class Game {
                 physicsSystem.setPoint(selectedUnit.getPhysicsComponent(), cursor.getSelectionPoint(), map, componentList);
             } else if (selectedUnit.getCombatComponent() != null && hoveredUnit.getCombatComponent() != null) {
                 combatSystem.completeCombat(selectedUnit, hoveredUnit, units);
-                selectedUnit = null;
             }
+            currentPlayerUnitsLeft.remove(selectedUnit);
+            selectedUnit = null;
         }
         this.selectedUnit = hoveredUnit;
+    }
+
+    private void checkChangeTurn() {
+        if (currentPlayerUnitsLeft.size() == 0) {
+            int index = players.indexOf(currentPlayer);
+            if (index < players.size() - 1) {
+                currentPlayer = players.get(index + 1);
+            } else {
+                currentPlayer = players.get(0);
+            }
+
+            currentPlayerUnitsLeft = units.stream()
+                    .filter(unit -> unit.getOwner().getUuid().equals(currentPlayer.getUuid()))
+                    .collect(Collectors.toCollection(ArrayList::new));
+
+            cursor.setPoint(currentPlayerUnitsLeft.get(0).getPhysicsComponent().getPoint(), map);
+        }
     }
 
     public void draw(GraphicsContext gc, double w, double h) {
