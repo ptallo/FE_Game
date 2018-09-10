@@ -3,9 +3,9 @@ package components.combat;
 import components.physics.PhysicsSystem;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import model.ObjectInterface;
 import model.Point;
 import model.map.Map;
+import model.unit.Unit;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -13,12 +13,12 @@ import java.util.stream.Collectors;
 public class CombatSystem {
     private PhysicsSystem physicsSystem = new PhysicsSystem();
 
-    public void drawAttackableArea(GraphicsContext gc, ObjectInterface object, Map map, ArrayList<ObjectInterface> units) {
-        ArrayList<Point> attackablePoints = getAttackableArea(object, map, units);
+    public void drawAttackableArea(GraphicsContext gc, Unit unit, Map map, ArrayList<Unit> units) {
+        ArrayList<Point> attackablePoints = getAttackableArea(unit, map, units);
         ArrayList<Point> movablePoints = physicsSystem.getMovablePoints(
-                object.getPhysicsComponent(),
+                unit.getPhysicsComponent(),
                 map,
-                units.stream().map(ObjectInterface::getPhysicsComponent).collect(Collectors.toList())
+                units.stream().map(Unit::getPhysicsComponent).collect(Collectors.toList())
         );
         
         for (Point point : attackablePoints) {
@@ -30,12 +30,12 @@ public class CombatSystem {
         }
     }
 
-    public ArrayList<Point> getAttackableArea(ObjectInterface object, Map map, ArrayList<ObjectInterface> units) {
+    public ArrayList<Point> getAttackableArea(Unit object, Map map, ArrayList<Unit> units) {
         ArrayList<Point> attackablePoints = new ArrayList<>();
         ArrayList<Point> movablePoints = physicsSystem.getMovablePoints(
                 object.getPhysicsComponent(),
                 map,
-                units.stream().map(ObjectInterface::getPhysicsComponent).collect(Collectors.toList())
+                units.stream().map(Unit::getPhysicsComponent).collect(Collectors.toList())
         );
 
         for (Point point : movablePoints) {
@@ -67,13 +67,13 @@ public class CombatSystem {
         return attackablePoints;
     }
 
-    public void completeCombat(ObjectInterface attacker, ObjectInterface defender, ArrayList<ObjectInterface> units) {
+    public void completeCombat(Unit attacker, Unit defender, ArrayList<Unit> units) {
         fight(attacker.getCombatComponent(), defender.getCombatComponent());
         checkDeath(defender, units);
         checkDeath(attacker, units);
     }
 
-    private void checkDeath(ObjectInterface unit, ArrayList<ObjectInterface> units) {
+    private void checkDeath(Unit unit, ArrayList<Unit> units) {
         if (unit.getCombatComponent().isDead()){
             units.remove(unit);
         }

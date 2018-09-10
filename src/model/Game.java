@@ -32,11 +32,19 @@ public class Game {
     private MapTileHoverInfo mapTileHoverInfo;
     private UnitHoverInfo unitHoverInfo;
 
-    private ArrayList<ObjectInterface> units;
-    private ObjectInterface selectedUnit;
-    private ObjectInterface hoveredUnit;
+    private ArrayList<Unit> units;
+    private Unit selectedUnit;
+    private Unit hoveredUnit;
+
+    private ArrayList<Player> players;
+    private Player user;
 
     public Game() {
+        players = new ArrayList<>();
+        user = new Player();
+        players.add(user);
+        players.add(new Player());
+
         mapTileHoverInfo = new MapTileHoverInfo(cursor, true, false);
         unitHoverInfo = new UnitHoverInfo(cursor, true, true);
         units = new ArrayList<>();
@@ -72,8 +80,8 @@ public class Game {
     }
 
     private void handleMouseMoved() {
-        ObjectInterface hoveredUnit = null;
-        for (ObjectInterface unit : units) {
+        Unit hoveredUnit = null;
+        for (Unit unit : units) {
             if (cursor.getSelectionPoint().equals(unit.getPhysicsComponent().getPoint())) {
                 hoveredUnit = unit;
             }
@@ -84,7 +92,7 @@ public class Game {
     private void handleEnterKey() {
         if (selectedUnit != null && hoveredUnit != selectedUnit) {
             if (hoveredUnit == null) {
-                List<PhysicsComponent> componentList = units.stream().map(ObjectInterface::getPhysicsComponent).collect(Collectors.toList());
+                List<PhysicsComponent> componentList = units.stream().map(Unit::getPhysicsComponent).collect(Collectors.toList());
                 physicsSystem.setPoint(selectedUnit.getPhysicsComponent(), cursor.getSelectionPoint(), map, componentList);
             } else if (selectedUnit.getCombatComponent() != null && hoveredUnit.getCombatComponent() != null) {
                 combatSystem.completeCombat(selectedUnit, hoveredUnit, units);
@@ -101,14 +109,14 @@ public class Game {
         map.draw(gc);
         if (selectedUnit != null) {
             if (selectedUnit.getPhysicsComponent() != null) {
-                List<PhysicsComponent> componentList = units.stream().map(ObjectInterface::getPhysicsComponent).collect(Collectors.toList());
+                List<PhysicsComponent> componentList = units.stream().map(Unit::getPhysicsComponent).collect(Collectors.toList());
                 physicsSystem.drawMovableArea(selectedUnit.getPhysicsComponent(), gc, map, componentList);
                 combatSystem.drawAttackableArea(gc, selectedUnit, map, units);
                 renderSystem.draw(selectionIndicator.getRenderComponent(), gc, selectedUnit.getPhysicsComponent().getPoint());
             }
         }
 
-        for (ObjectInterface unit : units) {
+        for (Unit unit : units) {
             if (unit.getRenderComponent() != null) {
                 renderSystem.draw(unit.getRenderComponent(), gc, unit.getPhysicsComponent().getPoint());
             }
@@ -117,9 +125,9 @@ public class Game {
         renderSystem.draw(cursor.getRenderComponent(), gc, cursor.getSelectionPoint());
         mapTileHoverInfo.showInfo(w, h, gc, map.getTileAtPoint(cursor.getSelectionPoint()));
         if (this.selectedUnit != null) {
-            unitHoverInfo.showInfo(w, h, gc, (Unit) this.selectedUnit);
+            unitHoverInfo.showInfo(w, h, gc, selectedUnit);
         } else if (this.hoveredUnit != null) {
-            unitHoverInfo.showInfo(w, h, gc, (Unit) this.hoveredUnit);
+            unitHoverInfo.showInfo(w, h, gc, hoveredUnit);
 
         }
     }

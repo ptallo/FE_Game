@@ -4,9 +4,8 @@ import components.combat.CombatComponent;
 import components.combat.WeaponEnum;
 import components.physics.PhysicsComponent;
 import components.render.RenderComponent;
-import model.ObjectInterface;
 
-public class Unit implements ObjectInterface {
+public class Unit {
     private RenderComponent renderComponent;
     private PhysicsComponent physicsComponent;
     private CombatComponent combatComponent;
@@ -19,7 +18,6 @@ public class Unit implements ObjectInterface {
         this.name = path;
     }
 
-    @Override
     public String getName() {
         return name;
     }
