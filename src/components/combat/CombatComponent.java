@@ -4,16 +4,24 @@ public class CombatComponent {
 
     private int healthCap;
     private int currentHealth;
-    private int damage;
+    private Weapon weapon;
 
-    public CombatComponent(int healthCap, int damage) {
+    public CombatComponent(int healthCap, Weapon weapon) {
         if (healthCap < 1) {
             this.healthCap = 1;
         } else {
             this.healthCap = healthCap;
         }
         this.currentHealth = healthCap;
-        this.damage = damage;
+        this.weapon = weapon;
+    }
+
+    public Weapon getWeapon() {
+        return weapon;
+    }
+
+    public void setWeapon(Weapon weapon) {
+        this.weapon = weapon;
     }
 
     public int getHealthCap() {
@@ -26,10 +34,6 @@ public class CombatComponent {
 
     public void setCurrentHealth(int currentHealth) {
         this.currentHealth = currentHealth;
-    }
-
-    public int getDamage() {
-        return damage;
     }
 
     public boolean isAlive() {

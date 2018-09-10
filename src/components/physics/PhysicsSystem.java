@@ -19,7 +19,7 @@ public class PhysicsSystem {
         }
     }
 
-    private ArrayList<Point> getMovablePoints(PhysicsComponent component, Map map, List<PhysicsComponent> units) {
+    public ArrayList<Point> getMovablePoints(PhysicsComponent component, Map map, List<PhysicsComponent> units) {
 
         HashMap<MapTile, Integer> costSoFar = new HashMap<>();
         HashMap<MapTile, MapTile> cameFrom = new HashMap<>();

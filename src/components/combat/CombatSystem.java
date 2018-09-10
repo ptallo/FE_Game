@@ -1,17 +1,79 @@
 package components.combat;
 
-import model.ObjectInterface;
+import components.physics.PhysicsSystem;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import model.Point;
+import model.map.Map;
+import model.unit.Unit;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class CombatSystem {
-    public void completeCombat(ObjectInterface attacker, ObjectInterface defender, ArrayList<ObjectInterface> units) {
+    private PhysicsSystem physicsSystem = new PhysicsSystem();
+
+    public void drawAttackableArea(GraphicsContext gc, Unit unit, Map map, ArrayList<Unit> units) {
+        ArrayList<Point> attackablePoints = getAttackableArea(unit, map, units);
+        ArrayList<Point> movablePoints = physicsSystem.getMovablePoints(
+                unit.getPhysicsComponent(),
+                map,
+                units.stream().map(Unit::getPhysicsComponent).collect(Collectors.toList())
+        );
+        
+        for (Point point : attackablePoints) {
+            if (!point.inCollection(movablePoints)){
+                Color red = new Color(1, 0, 0, 0.3);
+                gc.setFill(red);
+                gc.fillRect(point.getRealX(), point.getRealY(), Map.Tile_Width, Map.Tile_Height);
+            }
+        }
+    }
+
+    public ArrayList<Point> getAttackableArea(Unit object, Map map, ArrayList<Unit> units) {
+        ArrayList<Point> attackablePoints = new ArrayList<>();
+        ArrayList<Point> movablePoints = physicsSystem.getMovablePoints(
+                object.getPhysicsComponent(),
+                map,
+                units.stream().map(Unit::getPhysicsComponent).collect(Collectors.toList())
+        );
+
+        for (Point point : movablePoints) {
+            ArrayList<Point> newPoints = getAttackablePoints(object.getCombatComponent(), point);
+            for (Point newPoint : newPoints) {
+                if (!newPoint.inCollection(attackablePoints)) {
+                    attackablePoints.add(newPoint);
+                }
+            }
+        }
+
+        return attackablePoints;
+    }
+
+    private ArrayList<Point> getAttackablePoints(CombatComponent combatComponent, Point point) {
+        ArrayList<Point> attackablePoints = new ArrayList<>();
+        int[] ranges = combatComponent.getWeapon().getRanges();
+        for (int i = 0; i < ranges.length; i++) {
+            int range = ranges[i];
+            Point leftPoint = new Point(point.getX() - range, point.getY());
+            attackablePoints.add(leftPoint);
+            Point rightPoint = new Point(point.getX() + range, point.getY());
+            attackablePoints.add(rightPoint);
+            Point upPoint = new Point(point.getX(), point.getY() - range);
+            attackablePoints.add(upPoint);
+            Point downPoint = new Point(point.getX(), point.getY() + range);
+            attackablePoints.add(downPoint);
+        }
+        return attackablePoints;
+    }
+
+    public void completeCombat(Unit attacker, Unit defender, ArrayList<Unit> units) {
         fight(attacker.getCombatComponent(), defender.getCombatComponent());
         checkDeath(defender, units);
         checkDeath(attacker, units);
     }
 
-    private void checkDeath(ObjectInterface unit, ArrayList<ObjectInterface> units) {
+    private void checkDeath(Unit unit, ArrayList<Unit> units) {
         if (unit.getCombatComponent().isDead()){
             units.remove(unit);
         }
@@ -19,20 +81,22 @@ public class CombatSystem {
 
     private void fight(CombatComponent attacker, CombatComponent defender) {
         //return -1 if attacker died, 0 if neither died and 1 if defender died
-        takeDamage(defender, attacker.getDamage());
+        takeDamage(defender, attacker);
 
         if (defender.isDead()) {
             return;
         }
 
-        takeDamage(attacker, defender.getDamage());
+        takeDamage(attacker, defender);
     }
 
-    private void takeDamage(CombatComponent component, int amount){
-        int newHealth = component.getCurrentHealth() - amount;
-        if (newHealth <= 0) {
-            newHealth = 0;
+    private void takeDamage(CombatComponent defender, CombatComponent attacker){
+        if (attacker.getWeapon() != null) {
+            int newHealth = defender.getCurrentHealth() - attacker.getWeapon().getDamage();
+            if (newHealth <= 0) {
+                newHealth = 0;
+            }
+            defender.setCurrentHealth(newHealth);
         }
-        component.setCurrentHealth(newHealth);
     }
 }

@@ -3,9 +3,8 @@ package model.map;
 import components.combat.CombatComponent;
 import components.physics.PhysicsComponent;
 import components.render.RenderComponent;
-import model.ObjectInterface;
 
-public class MapTile implements ObjectInterface {
+public class MapTile {
 
     private PhysicsComponent physicsComponent;
     private RenderComponent renderComponent;
