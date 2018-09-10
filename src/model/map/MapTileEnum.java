@@ -1,9 +1,9 @@
 package model.map;
 
 public enum MapTileEnum {
-    GRASSTILE("grasstile.png", 1),
-    SANDTILE("sandtile.png", 99),
-    FOREST("forest.png", 3);
+    GRASSTILE("tiles/grasstile.png", 1),
+    SANDTILE("tiles/sandtile.png", 99),
+    FOREST("tiles/forest.png", 3);
 
     private String path;
     private Integer travelCost;

@@ -15,7 +15,7 @@ public class Cursor {
 
     public Cursor() {
         selectionPoint = new Point(0, 0);
-        renderComponent = new RenderComponent("selection_cursor.png", 32, 32, 1000);
+        renderComponent = new RenderComponent("tiles/selection_cursor.png", 32, 32, 1000);
     }
 
     public void setPoint(Point point, Map map) {
