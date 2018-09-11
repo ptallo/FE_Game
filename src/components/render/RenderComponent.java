@@ -1,8 +1,12 @@
 package components.render;
 
 import javafx.scene.image.Image;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class RenderComponent {
     private long lastAnimationTime;
@@ -23,6 +27,22 @@ public class RenderComponent {
         frameCount = (int) Math.floor(selectionImage.getWidth() / frameWidth);
         lastAnimationTime = System.currentTimeMillis();
         this.animationDuration = animationDuration;
+    }
+
+    private void convertToGrey() {
+        WritableImage writableImage = new WritableImage(
+                (int) selectionImage.getWidth(),
+                (int) selectionImage.getHeight()
+        );
+        PixelWriter writer = writableImage.getPixelWriter();
+        for (int y = 0; y < selectionImage.getHeight(); y++) {
+            for (int x = 0; x < selectionImage.getWidth(); x++) {
+                Color color = selectionImage.getPixelReader().getColor(x, y);
+                Color newColor = color.grayscale();
+                writer.setColor(x, y, newColor);
+            }
+        }
+        selectionImage = writableImage;
     }
 
     public long getLastAnimationTime() {
