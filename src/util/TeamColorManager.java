@@ -22,7 +22,7 @@ public class TeamColorManager {
 
     private Color[] team3Colors = {
             Color.rgb(55, 102, 210),
-            Color.rgb(34, 75, 171),
+            Color.rgb(31, 87, 171),
             Color.rgb(39, 67, 133)
     };
 

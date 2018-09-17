@@ -45,7 +45,9 @@ public class Game {
         players.add(new Player());
 
         units = new ArrayList<>();
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(currentPlayer, players.indexOf(currentPlayer),14, 7));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(currentPlayer, players.indexOf(currentPlayer),14, 5));
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 1, 6));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 1, 4));
 
         currentPlayerUnitsLeft = units.stream()
@@ -109,7 +111,9 @@ public class Game {
                     .filter(unit -> unit.getOwner().getUuid().equals(currentPlayer.getUuid()))
                     .collect(Collectors.toCollection(ArrayList::new));
 
-            cursor.setPoint(currentPlayerUnitsLeft.get(0).getPhysicsComponent().getPoint(), map);
+            Unit unit = currentPlayerUnitsLeft.get(0);
+            cursor.setPoint(unit.getPhysicsComponent().getPoint(), map);
+            hoveredUnit = unit;
         }
     }
 
@@ -129,7 +133,17 @@ public class Game {
 
         for (Unit unit : units) {
             if (unit.getRenderComponent() != null) {
-                renderSystem.draw(unit.getRenderComponent(), gc, unit.getPhysicsComponent().getPoint());
+                boolean drawGrey = false;
+                if (currentPlayer == unit.getOwner() && currentPlayerUnitsLeft.indexOf(unit) == -1) {
+                    drawGrey = true;
+                }
+
+                renderSystem.draw(
+                        unit.getRenderComponent(),
+                        gc,
+                        unit.getPhysicsComponent().getPoint(),
+                        drawGrey
+                );
             }
         }
 
