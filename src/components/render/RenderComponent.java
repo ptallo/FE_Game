@@ -4,6 +4,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
+import util.TeamColorManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -27,9 +28,13 @@ public class RenderComponent {
         frameCount = (int) Math.floor(selectionImage.getWidth() / frameWidth);
         lastAnimationTime = System.currentTimeMillis();
         this.animationDuration = animationDuration;
+
+        TeamColorManager colorManager = new TeamColorManager();
+        selectionImage = colorManager.convertToTeam(selectionImage, 2);
     }
 
     private void convertToGrey() {
+        ArrayList<Color> colors = new ArrayList<>();
         WritableImage writableImage = new WritableImage(
                 (int) selectionImage.getWidth(),
                 (int) selectionImage.getHeight()
@@ -38,11 +43,23 @@ public class RenderComponent {
         for (int y = 0; y < selectionImage.getHeight(); y++) {
             for (int x = 0; x < selectionImage.getWidth(); x++) {
                 Color color = selectionImage.getPixelReader().getColor(x, y);
+                boolean inArray = false;
+                for (Color iColor : colors) {
+                    if (color.equals(iColor)) {
+                        inArray = true;
+                    }
+                }
+                if (!inArray) {
+                    colors.add(color);
+                }
                 Color newColor = color.grayscale();
                 writer.setColor(x, y, newColor);
             }
         }
-        selectionImage = writableImage;
+
+        if (colors.size() > 2) {
+
+        }
     }
 
     public long getLastAnimationTime() {
