@@ -40,13 +40,12 @@ public class Game {
 
     public Game() {
         players = new ArrayList<>();
-        currentPlayer = new Player();
-        players.add(currentPlayer);
+        players.add(new Player());
         players.add(new Player());
 
         units = new ArrayList<>();
-        units.add(UnitEnum.SPEARMAN.getUnitInstance(currentPlayer, players.indexOf(currentPlayer),14, 7));
-        units.add(UnitEnum.SPEARMAN.getUnitInstance(currentPlayer, players.indexOf(currentPlayer),14, 5));
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(0), 0,14, 7));
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(0), 0,14, 5));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 1, 6));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 1, 4));
 
