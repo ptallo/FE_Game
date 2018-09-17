@@ -1,8 +1,6 @@
-package model;
+package util;
 
 import model.map.Map;
-import model.map.MapTile;
-import model.map.MapTileEnum;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -7,7 +7,7 @@ public class SelectionIndicator {
     private RenderComponent renderComponent;
 
     public SelectionIndicator() {
-        renderComponent = new RenderComponent("selection_indicator.png", 32,32, 1000);
+        renderComponent = new RenderComponent("tiles/selection_indicator.png", 32,32, 1000);
     }
 
     public RenderComponent getRenderComponent() {

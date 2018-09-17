@@ -11,7 +11,7 @@ public enum UnitEnum {
         this.path = path;
     }
 
-    public Unit getUnitInstance(Player owner, int x, int y) {
-        return new Unit(path, owner, x, y);
+    public Unit getUnitInstance(Player owner, int ownerIndex, int x, int y) {
+        return new Unit(path, owner, ownerIndex, x, y);
     }
 }

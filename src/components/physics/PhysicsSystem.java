@@ -2,7 +2,7 @@ package components.physics;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import model.Point;
+import util.Point;
 import model.map.Map;
 import model.map.MapTile;
 import util.PriorityQueue;

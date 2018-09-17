@@ -13,8 +13,8 @@ public class Unit {
     private String name;
     private Player owner;
 
-    public Unit(String path, Player owner, int x, int y) {
-        renderComponent = new RenderComponent(path, 32, 32, 1000);
+    public Unit(String path, Player owner, int ownerIndex, int x, int y) {
+        renderComponent = new RenderComponent(path, 32, 32, 1000, ownerIndex);
         physicsComponent = new PhysicsComponent(x, y, 7);
         combatComponent = new CombatComponent(10, WeaponEnum.SWORD.getInstance());
         this.owner = owner;
@@ -23,6 +23,10 @@ public class Unit {
 
     public String getName() {
         return name;
+    }
+
+    public Player getOwner() {
+        return owner;
     }
 
     public RenderComponent getRenderComponent() {

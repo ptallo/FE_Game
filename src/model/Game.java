@@ -12,10 +12,10 @@ import model.cursor.SelectionIndicator;
 import model.map.Map;
 import model.unit.Unit;
 import model.unit.UnitEnum;
-import view.hover.MapTileHoverInfo;
-import view.hover.UnitHoverInfo;
+import view.InfoItem;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,23 +28,31 @@ public class Game {
     private Map map = new Map();
     private Cursor cursor = new Cursor();
     private SelectionIndicator selectionIndicator = new SelectionIndicator();
+    private InfoItem playerTurnInfoItem = new InfoItem();
 
     private ArrayList<Unit> units;
+    private ArrayList<Unit> currentPlayerUnitsLeft;
     private Unit selectedUnit;
     private Unit hoveredUnit;
 
     private ArrayList<Player> players;
-    private Player user;
+    private Player currentPlayer;
 
     public Game() {
         players = new ArrayList<>();
-        user = new Player();
-        players.add(user);
+        currentPlayer = new Player();
+        players.add(currentPlayer);
         players.add(new Player());
 
         units = new ArrayList<>();
-        units.add(UnitEnum.SPEARMAN.getUnitInstance(user, 14, 5));
-        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 4));
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(currentPlayer, players.indexOf(currentPlayer),14, 7));
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(currentPlayer, players.indexOf(currentPlayer),14, 5));
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 1, 6));
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 1, 4));
+
+        currentPlayerUnitsLeft = new ArrayList<>();
+        currentPlayer = players.get(players.size() - 1);
+        checkChangeTurn();
     }
 
     public void handleKeyEvent(KeyEvent event) {
@@ -63,11 +71,12 @@ public class Game {
         } else if (event.getCode() == KeyCode.ENTER) {
             handleEnterKey();
         }
+        checkChangeTurn();
     }
 
     private void handleCursorMoved() {
         Unit hoveredUnit = null;
-        for (Unit unit : units) {
+        for (Unit unit : currentPlayerUnitsLeft) {
             if (cursor.getSelectionPoint().equals(unit.getPhysicsComponent().getPoint())) {
                 hoveredUnit = unit;
             }
@@ -82,10 +91,30 @@ public class Game {
                 physicsSystem.setPoint(selectedUnit.getPhysicsComponent(), cursor.getSelectionPoint(), map, componentList);
             } else if (selectedUnit.getCombatComponent() != null && hoveredUnit.getCombatComponent() != null) {
                 combatSystem.completeCombat(selectedUnit, hoveredUnit, units);
-                selectedUnit = null;
             }
+            currentPlayerUnitsLeft.remove(selectedUnit);
+            selectedUnit = null;
         }
         this.selectedUnit = hoveredUnit;
+    }
+
+    private void checkChangeTurn() {
+        if (currentPlayerUnitsLeft.size() == 0) {
+            int index = players.indexOf(currentPlayer);
+            if (index < players.size() - 1) {
+                currentPlayer = players.get(index + 1);
+            } else {
+                currentPlayer = players.get(0);
+            }
+
+            currentPlayerUnitsLeft = units.stream()
+                    .filter(unit -> unit.getOwner().getUuid().equals(currentPlayer.getUuid()))
+                    .collect(Collectors.toCollection(ArrayList::new));
+
+            Unit unit = currentPlayerUnitsLeft.get(0);
+            cursor.setPoint(unit.getPhysicsComponent().getPoint(), map);
+            hoveredUnit = unit;
+        }
     }
 
     public void draw(GraphicsContext gc, double w, double h) {
@@ -104,11 +133,25 @@ public class Game {
 
         for (Unit unit : units) {
             if (unit.getRenderComponent() != null) {
-                renderSystem.draw(unit.getRenderComponent(), gc, unit.getPhysicsComponent().getPoint());
+                boolean drawGrey = false;
+                if (currentPlayer == unit.getOwner() && currentPlayerUnitsLeft.indexOf(unit) == -1) {
+                    drawGrey = true;
+                }
+
+                renderSystem.draw(
+                        unit.getRenderComponent(),
+                        gc,
+                        unit.getPhysicsComponent().getPoint(),
+                        drawGrey
+                );
             }
         }
 
         renderSystem.draw(cursor.getRenderComponent(), gc, cursor.getSelectionPoint());
+
+        HashMap<String, String> playerMap = new HashMap<>();
+        playerMap.put("Player", String.valueOf(players.indexOf(currentPlayer) + 1));
+        playerTurnInfoItem.showInfo(w * 0.02, w * 0.02, gc, playerMap);
     }
 
 }
