@@ -20,7 +20,7 @@ public class RenderComponent {
 
     private Image selectionImage;
 
-    public RenderComponent(String path, double frameWidth, double frameHeight, long animationDuration) {
+    public RenderComponent(String path, double frameWidth, double frameHeight, long animationDuration, int ownerIndex) {
         selectionImage = new Image(new File("resources/" + path).toURI().toString());
         this.frameWidth = frameWidth;
         this.frameHeight = frameHeight;
@@ -29,8 +29,14 @@ public class RenderComponent {
         lastAnimationTime = System.currentTimeMillis();
         this.animationDuration = animationDuration;
 
-        TeamColorManager colorManager = new TeamColorManager();
-        selectionImage = colorManager.convertToTeam(selectionImage, 1);
+        if (ownerIndex >= 0) {
+            TeamColorManager colorManager = new TeamColorManager();
+            selectionImage = colorManager.convertToTeam(selectionImage, ownerIndex);
+        }
+    }
+
+    public RenderComponent(String path, double frameWidth, double frameHeight, long animationDuration) {
+        this(path, frameWidth, frameHeight, animationDuration, -1);
     }
 
     public long getLastAnimationTime() {

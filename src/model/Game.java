@@ -45,8 +45,8 @@ public class Game {
         players.add(new Player());
 
         units = new ArrayList<>();
-        units.add(UnitEnum.SPEARMAN.getUnitInstance(currentPlayer, 14, 5));
-        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 4));
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(currentPlayer, players.indexOf(currentPlayer),14, 5));
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 1, 4));
 
         currentPlayerUnitsLeft = units.stream()
                 .filter(unit -> unit.getOwner().getUuid().equals(currentPlayer.getUuid()))
