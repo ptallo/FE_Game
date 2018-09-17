@@ -50,9 +50,9 @@ public class Game {
         units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 1, 6));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 1, 4));
 
-        currentPlayerUnitsLeft = units.stream()
-                .filter(unit -> unit.getOwner().getUuid().equals(currentPlayer.getUuid()))
-                .collect(Collectors.toCollection(ArrayList::new));
+        currentPlayerUnitsLeft = new ArrayList<>();
+        currentPlayer = players.get(players.size() - 1);
+        checkChangeTurn();
     }
 
     public void handleKeyEvent(KeyEvent event) {
