@@ -30,36 +30,7 @@ public class RenderComponent {
         this.animationDuration = animationDuration;
 
         TeamColorManager colorManager = new TeamColorManager();
-        selectionImage = colorManager.convertToTeam(selectionImage, 2);
-    }
-
-    private void convertToGrey() {
-        ArrayList<Color> colors = new ArrayList<>();
-        WritableImage writableImage = new WritableImage(
-                (int) selectionImage.getWidth(),
-                (int) selectionImage.getHeight()
-        );
-        PixelWriter writer = writableImage.getPixelWriter();
-        for (int y = 0; y < selectionImage.getHeight(); y++) {
-            for (int x = 0; x < selectionImage.getWidth(); x++) {
-                Color color = selectionImage.getPixelReader().getColor(x, y);
-                boolean inArray = false;
-                for (Color iColor : colors) {
-                    if (color.equals(iColor)) {
-                        inArray = true;
-                    }
-                }
-                if (!inArray) {
-                    colors.add(color);
-                }
-                Color newColor = color.grayscale();
-                writer.setColor(x, y, newColor);
-            }
-        }
-
-        if (colors.size() > 2) {
-
-        }
+        selectionImage = colorManager.convertToTeam(selectionImage, 1);
     }
 
     public long getLastAnimationTime() {
