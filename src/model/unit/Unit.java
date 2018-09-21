@@ -6,6 +6,10 @@ import components.physics.PhysicsComponent;
 import components.render.RenderComponent;
 import model.Player;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 public class Unit {
     private RenderComponent renderComponent;
     private PhysicsComponent physicsComponent;
@@ -19,6 +23,13 @@ public class Unit {
         combatComponent = new CombatComponent(10, WeaponEnum.SWORD.getInstance());
         this.owner = owner;
         this.name = path;
+    }
+
+    public List<String> getOptions() {
+        ArrayList<String> strings = new ArrayList<>();
+        strings.add("Wait");
+        strings.add("Fight");
+        return strings;
     }
 
     public String getName() {

@@ -13,7 +13,7 @@ public class GameController {
     }
 
     private void handleKeyEvent(KeyEvent event){
-        game.handleKeyEvent(event);
+        game.handleEvent(event);
     }
 
     public Game getGame() {

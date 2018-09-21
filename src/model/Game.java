@@ -12,6 +12,8 @@ import model.cursor.SelectionIndicator;
 import model.map.Map;
 import model.unit.Unit;
 import model.unit.UnitEnum;
+import util.Point;
+import view.ActionInfoItem;
 import view.InfoItem;
 
 import java.util.ArrayList;
@@ -29,6 +31,9 @@ public class Game {
     private Cursor cursor = new Cursor();
     private SelectionIndicator selectionIndicator = new SelectionIndicator();
     private InfoItem playerTurnInfoItem = new InfoItem();
+
+    private ActionInfoItem actionInfoItem = new ActionInfoItem();
+    boolean drawActionInfoItem = false;
 
     private ArrayList<Unit> units;
     private ArrayList<Unit> currentPlayerUnitsLeft;
@@ -54,7 +59,18 @@ public class Game {
         checkChangeTurn();
     }
 
-    public void handleKeyEvent(KeyEvent event) {
+    public void handleEvent(KeyEvent event) {
+        // States : No Unit Selected, Unit Selected, Square Selected, Action Selected
+        if (selectedUnit == null) {
+            handleKeyEventNoUnit(event);
+        } else if (drawActionInfoItem) {
+            handleKeyEventSquareSelected(event);
+        } else {
+            handleKeyEventSelectedUnit(event);
+        }
+    }
+
+    private void handleKeyEventNoUnit(KeyEvent event) {
         if (event.getCode() == KeyCode.UP) {
             cursor.movePoint(0, -1, map);
             handleCursorMoved();
@@ -68,9 +84,47 @@ public class Game {
             cursor.movePoint(1, 0, map);
             handleCursorMoved();
         } else if (event.getCode() == KeyCode.ENTER) {
-            handleEnterKey();
+            this.selectedUnit = hoveredUnit;
         }
         checkChangeTurn();
+    }
+
+    private void handleKeyEventSelectedUnit(KeyEvent event) {
+        if (event.getCode() == KeyCode.UP) {
+            cursor.movePoint(0, -1, map);
+            handleCursorMoved();
+        } else if (event.getCode() == KeyCode.DOWN) {
+            cursor.movePoint(0, 1, map);
+            handleCursorMoved();
+        } else if (event.getCode() == KeyCode.LEFT) {
+            cursor.movePoint(-1, 0, map);
+            handleCursorMoved();
+        } else if (event.getCode() == KeyCode.RIGHT) {
+            cursor.movePoint(1, 0, map);
+            handleCursorMoved();
+        } else if (event.getCode() == KeyCode.ENTER) {
+            drawActionInfoItem = true;
+        }
+    }
+
+    private void handleKeyEventSquareSelected(KeyEvent event) {
+        if (event.getCode() == KeyCode.UP) {
+            actionInfoItem.changeOption(-1);
+        } else if (event.getCode() == KeyCode.DOWN) {
+            actionInfoItem.changeOption(1);
+        } else if (event.getCode() == KeyCode.ENTER) {
+            // Get Selected Action
+            // Then execute Selected Action
+            if (hoveredUnit == null) {
+                List<PhysicsComponent> componentList = units.stream().map(Unit::getPhysicsComponent).collect(Collectors.toList());
+                physicsSystem.setPoint(selectedUnit.getPhysicsComponent(), cursor.getSelectionPoint(), map, componentList);
+            } else if (selectedUnit.getCombatComponent() != null && hoveredUnit.getCombatComponent() != null) {
+                combatSystem.completeCombat(selectedUnit, hoveredUnit, units);
+            }
+            currentPlayerUnitsLeft.remove(selectedUnit);
+            selectedUnit = null;
+            drawActionInfoItem = false;
+        }
     }
 
     private void handleCursorMoved() {
@@ -81,20 +135,6 @@ public class Game {
             }
         }
         this.hoveredUnit = hoveredUnit;
-    }
-
-    private void handleEnterKey() {
-        if (selectedUnit != null && hoveredUnit != selectedUnit) {
-            if (hoveredUnit == null) {
-                List<PhysicsComponent> componentList = units.stream().map(Unit::getPhysicsComponent).collect(Collectors.toList());
-                physicsSystem.setPoint(selectedUnit.getPhysicsComponent(), cursor.getSelectionPoint(), map, componentList);
-            } else if (selectedUnit.getCombatComponent() != null && hoveredUnit.getCombatComponent() != null) {
-                combatSystem.completeCombat(selectedUnit, hoveredUnit, units);
-            }
-            currentPlayerUnitsLeft.remove(selectedUnit);
-            selectedUnit = null;
-        }
-        this.selectedUnit = hoveredUnit;
     }
 
     private void checkChangeTurn() {
@@ -121,6 +161,21 @@ public class Game {
         gc.clearRect(-gc.getTransform().getTx(), -gc.getTransform().getTy(), w, h);
 
         map.draw(gc);
+
+        drawUnits(gc);
+
+        Point selectionPoint = cursor.getSelectionPoint();
+        renderSystem.draw(cursor.getRenderComponent(), gc, selectionPoint);
+        if (selectedUnit != null && drawActionInfoItem) {
+            actionInfoItem.draw(gc, new Point(selectionPoint.getX() + 1, selectionPoint.getY()), selectedUnit.getOptions());
+        }
+
+        HashMap<String, String> playerMap = new HashMap<>();
+        playerMap.put("Player", String.valueOf(players.indexOf(currentPlayer) + 1));
+        playerTurnInfoItem.showInfo(w * 0.02, w * 0.02, gc, playerMap);
+    }
+
+    private void drawUnits(GraphicsContext gc) {
         if (selectedUnit != null) {
             if (selectedUnit.getPhysicsComponent() != null) {
                 List<PhysicsComponent> componentList = units.stream().map(Unit::getPhysicsComponent).collect(Collectors.toList());
@@ -145,12 +200,6 @@ public class Game {
                 );
             }
         }
-
-        renderSystem.draw(cursor.getRenderComponent(), gc, cursor.getSelectionPoint());
-
-        HashMap<String, String> playerMap = new HashMap<>();
-        playerMap.put("Player", String.valueOf(players.indexOf(currentPlayer) + 1));
-        playerTurnInfoItem.showInfo(w * 0.02, w * 0.02, gc, playerMap);
     }
 
 }
