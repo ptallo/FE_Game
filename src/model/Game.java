@@ -33,7 +33,6 @@ public class Game {
     private InfoItem playerTurnInfoItem = new InfoItem();
 
     private ActionInfoItem actionInfoItem = new ActionInfoItem();
-    boolean drawActionInfoItem = false;
 
     private ArrayList<Unit> units;
     private ArrayList<Unit> currentPlayerUnitsLeft;
@@ -63,7 +62,7 @@ public class Game {
         // States : No Unit Selected, Unit Selected, Square Selected, Action Selected
         if (selectedUnit == null) {
             handleKeyEventNoUnit(event);
-        } else if (drawActionInfoItem) {
+        } else if (actionInfoItem.getDrawItem()) {
             handleKeyEventSquareSelected(event);
         } else {
             handleKeyEventSelectedUnit(event);
@@ -89,6 +88,36 @@ public class Game {
         checkChangeTurn();
     }
 
+    private void drawNoUnit(GraphicsContext gc, double w, double h) {
+        cursor.handleTransform(gc, w, h);
+        gc.clearRect(-gc.getTransform().getTx(), -gc.getTransform().getTy(), w, h);
+
+        map.draw(gc);
+
+        for (Unit unit : units) {
+            if (unit.getRenderComponent() != null) {
+                boolean drawGrey = false;
+                if (currentPlayer == unit.getOwner() && currentPlayerUnitsLeft.indexOf(unit) == -1) {
+                    drawGrey = true;
+                }
+
+                renderSystem.draw(
+                        unit.getRenderComponent(),
+                        gc,
+                        unit.getPhysicsComponent().getPoint(),
+                        drawGrey
+                );
+            }
+        }
+
+        Point selectionPoint = cursor.getSelectionPoint();
+        renderSystem.draw(cursor.getRenderComponent(), gc, selectionPoint);
+
+        HashMap<String, String> playerMap = new HashMap<>();
+        playerMap.put("Player", String.valueOf(players.indexOf(currentPlayer) + 1));
+        playerTurnInfoItem.showInfo(w * 0.02, w * 0.02, gc, playerMap);
+    }
+
     private void handleKeyEventSelectedUnit(KeyEvent event) {
         if (event.getCode() == KeyCode.UP) {
             cursor.movePoint(0, -1, map);
@@ -103,8 +132,44 @@ public class Game {
             cursor.movePoint(1, 0, map);
             handleCursorMoved();
         } else if (event.getCode() == KeyCode.ENTER) {
-            drawActionInfoItem = true;
+            List<PhysicsComponent> componentList = units.stream().map(Unit::getPhysicsComponent).collect(Collectors.toList());
+            physicsSystem.setPoint(selectedUnit.getPhysicsComponent(), cursor.getSelectionPoint(), map, componentList);
+            actionInfoItem.setDrawItem(true);
         }
+    }
+
+    private void drawSelectedUnit(GraphicsContext gc, double w, double h) {
+        cursor.handleTransform(gc, w, h);
+        gc.clearRect(-gc.getTransform().getTx(), -gc.getTransform().getTy(), w, h);
+
+        map.draw(gc);
+
+        List<PhysicsComponent> componentList = units.stream().map(Unit::getPhysicsComponent).collect(Collectors.toList());
+        physicsSystem.drawMovableArea(selectedUnit.getPhysicsComponent(), gc, map, componentList);
+        renderSystem.draw(selectionIndicator.getRenderComponent(), gc, selectedUnit.getPhysicsComponent().getPoint());
+
+        for (Unit unit : units) {
+            if (unit.getRenderComponent() != null) {
+                boolean drawGrey = false;
+                if (currentPlayer == unit.getOwner() && currentPlayerUnitsLeft.indexOf(unit) == -1) {
+                    drawGrey = true;
+                }
+
+                renderSystem.draw(
+                        unit.getRenderComponent(),
+                        gc,
+                        unit.getPhysicsComponent().getPoint(),
+                        drawGrey
+                );
+            }
+        }
+
+        Point selectionPoint = cursor.getSelectionPoint();
+        renderSystem.draw(cursor.getRenderComponent(), gc, selectionPoint);
+
+        HashMap<String, String> playerMap = new HashMap<>();
+        playerMap.put("Player", String.valueOf(players.indexOf(currentPlayer) + 1));
+        playerTurnInfoItem.showInfo(w * 0.02, w * 0.02, gc, playerMap);
     }
 
     private void handleKeyEventSquareSelected(KeyEvent event) {
@@ -115,15 +180,55 @@ public class Game {
         } else if (event.getCode() == KeyCode.ENTER) {
             // Get Selected Action
             // Then execute Selected Action
-            if (hoveredUnit == null) {
-                List<PhysicsComponent> componentList = units.stream().map(Unit::getPhysicsComponent).collect(Collectors.toList());
-                physicsSystem.setPoint(selectedUnit.getPhysicsComponent(), cursor.getSelectionPoint(), map, componentList);
-            } else if (selectedUnit.getCombatComponent() != null && hoveredUnit.getCombatComponent() != null) {
-                combatSystem.completeCombat(selectedUnit, hoveredUnit, units);
-            }
+
             currentPlayerUnitsLeft.remove(selectedUnit);
             selectedUnit = null;
-            drawActionInfoItem = false;
+            actionInfoItem.setDrawItem(false);
+        } else if (event.getCode() == KeyCode.ESCAPE) {
+            // Move the Unit back to its previous position
+            selectedUnit.getPhysicsComponent().revertPosition();
+            actionInfoItem.setDrawItem(false);
+        }
+    }
+
+    private void drawSelectedSquare(GraphicsContext gc, double w, double h) {
+        cursor.handleTransform(gc, w, h);
+        gc.clearRect(-gc.getTransform().getTx(), -gc.getTransform().getTy(), w, h);
+
+        map.draw(gc);
+
+        for (Unit unit : units) {
+            if (unit.getRenderComponent() != null) {
+                boolean drawGrey = false;
+                if (currentPlayer == unit.getOwner() && currentPlayerUnitsLeft.indexOf(unit) == -1) {
+                    drawGrey = true;
+                }
+
+                renderSystem.draw(
+                        unit.getRenderComponent(),
+                        gc,
+                        unit.getPhysicsComponent().getPoint(),
+                        drawGrey
+                );
+            }
+        }
+
+        Point selectionPoint = cursor.getSelectionPoint();
+        renderSystem.draw(cursor.getRenderComponent(), gc, selectionPoint);
+        actionInfoItem.draw(gc, new Point(selectionPoint.getX() + 1, selectionPoint.getY()), selectedUnit.getOptions());
+
+        HashMap<String, String> playerMap = new HashMap<>();
+        playerMap.put("Player", String.valueOf(players.indexOf(currentPlayer) + 1));
+        playerTurnInfoItem.showInfo(w * 0.02, w * 0.02, gc, playerMap);
+    }
+
+    public void draw(GraphicsContext gc, double w, double h) {
+        if (selectedUnit == null) {
+            drawNoUnit(gc, w, h);
+        } else if (actionInfoItem.getDrawItem()) {
+            drawSelectedSquare(gc, w, h);
+        } else {
+            drawSelectedUnit(gc, w, h);
         }
     }
 
@@ -155,51 +260,4 @@ public class Game {
             hoveredUnit = unit;
         }
     }
-
-    public void draw(GraphicsContext gc, double w, double h) {
-        cursor.handleTransform(gc, w, h);
-        gc.clearRect(-gc.getTransform().getTx(), -gc.getTransform().getTy(), w, h);
-
-        map.draw(gc);
-
-        drawUnits(gc);
-
-        Point selectionPoint = cursor.getSelectionPoint();
-        renderSystem.draw(cursor.getRenderComponent(), gc, selectionPoint);
-        if (selectedUnit != null && drawActionInfoItem) {
-            actionInfoItem.draw(gc, new Point(selectionPoint.getX() + 1, selectionPoint.getY()), selectedUnit.getOptions());
-        }
-
-        HashMap<String, String> playerMap = new HashMap<>();
-        playerMap.put("Player", String.valueOf(players.indexOf(currentPlayer) + 1));
-        playerTurnInfoItem.showInfo(w * 0.02, w * 0.02, gc, playerMap);
-    }
-
-    private void drawUnits(GraphicsContext gc) {
-        if (selectedUnit != null) {
-            if (selectedUnit.getPhysicsComponent() != null) {
-                List<PhysicsComponent> componentList = units.stream().map(Unit::getPhysicsComponent).collect(Collectors.toList());
-                physicsSystem.drawMovableArea(selectedUnit.getPhysicsComponent(), gc, map, componentList);
-                combatSystem.drawAttackableArea(gc, selectedUnit, map, units);
-                renderSystem.draw(selectionIndicator.getRenderComponent(), gc, selectedUnit.getPhysicsComponent().getPoint());
-            }
-        }
-
-        for (Unit unit : units) {
-            if (unit.getRenderComponent() != null) {
-                boolean drawGrey = false;
-                if (currentPlayer == unit.getOwner() && currentPlayerUnitsLeft.indexOf(unit) == -1) {
-                    drawGrey = true;
-                }
-
-                renderSystem.draw(
-                        unit.getRenderComponent(),
-                        gc,
-                        unit.getPhysicsComponent().getPoint(),
-                        drawGrey
-                );
-            }
-        }
-    }
-
 }

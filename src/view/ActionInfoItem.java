@@ -16,6 +16,7 @@ public class ActionInfoItem {
     private final int textBuffer = 6;
     private final Font font = new Font("Monospaced", fontSize);
 
+    private Boolean drawItem = false;
     private int optionIndex = 1;
     private List<? extends String> options;
 
@@ -28,60 +29,62 @@ public class ActionInfoItem {
     }
 
     public void draw(GraphicsContext gc, Point point, List<? extends String> options) {
-        boolean optionsEqual = true;
-        if (this.options != null && options != null) {
-            for (int i = 0; i < options.size(); i++) {
-                if (!options.get(i).equalsIgnoreCase(this.options.get(i))) {
-                    optionsEqual = false;
+        if (drawItem) {
+            boolean optionsEqual = true;
+            if (this.options != null && options != null) {
+                for (int i = 0; i < options.size(); i++) {
+                    if (!options.get(i).equalsIgnoreCase(this.options.get(i))) {
+                        optionsEqual = false;
+                    }
                 }
             }
-        }
 
-        if (!optionsEqual) {
-            optionIndex = 0;
-        }
-        this.options = options;
+            if (!optionsEqual) {
+                optionIndex = 0;
+            }
+            this.options = options;
 
-        double width = getWidth(options);
-        double height = getHeight(options);
-        double realX = point.getRealX();
-        double realY = point.getRealY();
-        double rectWidth = width + (width * xMargin * 2);
+            double width = getWidth(options);
+            double height = getHeight(options);
+            double realX = point.getRealX();
+            double realY = point.getRealY();
+            double rectWidth = width + (width * xMargin * 2);
 
-        gc.setFill(Color.BEIGE);
-        gc.fillRect(
-                realX,
-                realY,
-                rectWidth,
-                height + (textBuffer * options.size())
-        );
+            gc.setFill(Color.BEIGE);
+            gc.fillRect(
+                    realX,
+                    realY,
+                    rectWidth,
+                    height + (textBuffer * options.size())
+            );
 
-        gc.setStroke(Color.BLACK);
-        gc.setLineWidth(3);
-        gc.strokeRect(
-                realX,
-                realY,
-                rectWidth,
-                height + (textBuffer * options.size())
-        );
+            gc.setStroke(Color.BLACK);
+            gc.setLineWidth(3);
+            gc.strokeRect(
+                    realX,
+                    realY,
+                    rectWidth,
+                    height + (textBuffer * options.size())
+            );
 
-        gc.setFill(Color.BLACK);
-        for (int i = 0; i < options.size(); i++) {
-            gc.fillText(
-                    options.get(i),
-                    realX + (width * xMargin),
-                    realY + (fontSize * (i + 1) + textBuffer * i)
+            gc.setFill(Color.BLACK);
+            for (int i = 0; i < options.size(); i++) {
+                gc.fillText(
+                        options.get(i),
+                        realX + (width * xMargin),
+                        realY + (fontSize * (i + 1) + textBuffer * i)
+                );
+            }
+
+            gc.setStroke(Color.YELLOW);
+            gc.setLineWidth(1);
+            gc.strokeRect(
+                    realX + gc.getLineWidth(),
+                    realY + (optionIndex != 0 ? optionIndex * (fontSize + textBuffer) : gc.getLineWidth()),
+                    rectWidth - (2 * gc.getLineWidth()),
+                    fontSize + textBuffer - (optionIndex == 0 ? gc.getLineWidth() : 0)
             );
         }
-
-        gc.setStroke(Color.YELLOW);
-        gc.setLineWidth(1);
-        gc.strokeRect(
-                realX + gc.getLineWidth(),
-                realY + (optionIndex != 0 ? optionIndex * (fontSize + textBuffer) : gc.getLineWidth()),
-                rectWidth - (2 * gc.getLineWidth()),
-                fontSize + textBuffer - (optionIndex == 0 ? gc.getLineWidth() : 0)
-        );
     }
 
     private double getWidth(Collection<? extends String> strings) {
@@ -109,5 +112,13 @@ public class ActionInfoItem {
             newOption = this.options.size() - 1;
         }
         optionIndex = newOption;
+    }
+
+    public Boolean getDrawItem() {
+        return drawItem;
+    }
+
+    public void setDrawItem(Boolean drawItem) {
+        this.drawItem = drawItem;
     }
 }

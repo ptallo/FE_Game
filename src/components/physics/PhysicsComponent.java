@@ -3,6 +3,7 @@ package components.physics;
 import util.Point;
 
 public class PhysicsComponent {
+    private Point previousPosition;
     private Point point;
     private Integer travelDistance;
 
@@ -16,10 +17,16 @@ public class PhysicsComponent {
     }
 
     public void setPoint(Point point) {
+        this.previousPosition = this.point;
         this.point = point;
     }
 
     public Integer getTravelDistance() {
         return travelDistance;
+    }
+
+    public void revertPosition() {
+        this.point = previousPosition;
+        this.previousPosition = null;
     }
 }
