@@ -17,7 +17,7 @@ public class ActionInfoItem {
     private final Font font = new Font("Monospaced", fontSize);
 
     private Boolean drawItem = false;
-    private int optionIndex = 1;
+    private int optionIndex = 0;
     private List<? extends String> options;
 
     public void draw(GraphicsContext gc, Point point) {
@@ -119,6 +119,9 @@ public class ActionInfoItem {
     }
 
     public void setDrawItem(Boolean drawItem) {
+        if (drawItem) {
+            this.optionIndex = 0;
+        }
         this.drawItem = drawItem;
     }
 }

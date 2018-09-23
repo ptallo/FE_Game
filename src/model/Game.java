@@ -17,6 +17,7 @@ import view.ActionInfoItem;
 import view.InfoItem;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -66,6 +67,16 @@ public class Game {
             handleKeyEventSquareSelected(event);
         } else {
             handleKeyEventSelectedUnit(event);
+        }
+    }
+
+    public void draw(GraphicsContext gc, double w, double h) {
+        if (selectedUnit == null) {
+            drawNoUnit(gc, w, h);
+        } else if (actionInfoItem.getDrawItem()) {
+            drawSelectedSquare(gc, w, h);
+        } else {
+            drawSelectedUnit(gc, w, h);
         }
     }
 
@@ -197,6 +208,8 @@ public class Game {
 
         map.draw(gc);
 
+        combatSystem.drawAttackablePoints(gc, selectedUnit.getCombatComponent(), selectedUnit.getPhysicsComponent().getPoint());
+
         for (Unit unit : units) {
             if (unit.getRenderComponent() != null) {
                 boolean drawGrey = false;
@@ -215,21 +228,18 @@ public class Game {
 
         Point selectionPoint = cursor.getSelectionPoint();
         renderSystem.draw(cursor.getRenderComponent(), gc, selectionPoint);
-        actionInfoItem.draw(gc, new Point(selectionPoint.getX() + 1, selectionPoint.getY()), selectedUnit.getOptions());
+        actionInfoItem.draw(
+                gc,
+                new Point(
+                        selectionPoint.getX() + 1 + selectedUnit.getCombatComponent().getWeapon().getMaxRange(),
+                        selectionPoint.getY()
+                ),
+                selectedUnit.getOptions()
+        );
 
         HashMap<String, String> playerMap = new HashMap<>();
         playerMap.put("Player", String.valueOf(players.indexOf(currentPlayer) + 1));
         playerTurnInfoItem.showInfo(w * 0.02, w * 0.02, gc, playerMap);
-    }
-
-    public void draw(GraphicsContext gc, double w, double h) {
-        if (selectedUnit == null) {
-            drawNoUnit(gc, w, h);
-        } else if (actionInfoItem.getDrawItem()) {
-            drawSelectedSquare(gc, w, h);
-        } else {
-            drawSelectedUnit(gc, w, h);
-        }
     }
 
     private void handleCursorMoved() {

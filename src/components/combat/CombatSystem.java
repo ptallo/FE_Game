@@ -1,48 +1,48 @@
 package components.combat;
 
-import components.physics.PhysicsSystem;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import util.Point;
 import model.map.Map;
 import model.unit.Unit;
+import util.Point;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
+import java.util.HashMap;
 
 public class CombatSystem {
-    private PhysicsSystem physicsSystem = new PhysicsSystem();
 
-    public void drawAttackableArea(GraphicsContext gc, Unit unit, Map map, ArrayList<Unit> units) {
-        ArrayList<Point> attackablePoints = getAttackableArea(unit, map, units);
-        ArrayList<Point> movablePoints = physicsSystem.getMovablePoints(
-                unit.getPhysicsComponent(),
-                map,
-                units.stream().map(Unit::getPhysicsComponent).collect(Collectors.toList())
-        );
-        
-        for (Point point : attackablePoints) {
-            if (!point.inCollection(movablePoints)){
-                Color red = new Color(1, 0, 0, 0.3);
-                gc.setFill(red);
-                gc.fillRect(point.getRealX(), point.getRealY(), Map.Tile_Width, Map.Tile_Height);
-            }
+    public void drawAttackablePoints(GraphicsContext gc, CombatComponent combatComponent, Point point) {
+        ArrayList<Point> points = getAttackablePoints(combatComponent, point);
+        for (Point aPoint : points) {
+            gc.setFill(Color.rgb(255, 0, 0, 0.2));
+            gc.fillRect(aPoint.getRealX(), aPoint.getRealY(), Map.Tile_Width, Map.Tile_Height);
         }
     }
 
-    public ArrayList<Point> getAttackableArea(Unit object, Map map, ArrayList<Unit> units) {
+    public ArrayList<Point> getAttackablePoints(CombatComponent combatComponent, Point point) {
         ArrayList<Point> attackablePoints = new ArrayList<>();
-        ArrayList<Point> movablePoints = physicsSystem.getMovablePoints(
-                object.getPhysicsComponent(),
-                map,
-                units.stream().map(Unit::getPhysicsComponent).collect(Collectors.toList())
-        );
+        int[] ranges = combatComponent.getWeapon().getRanges();
 
-        for (Point point : movablePoints) {
-            ArrayList<Point> newPoints = getAttackablePoints(object.getCombatComponent(), point);
-            for (Point newPoint : newPoints) {
-                if (!newPoint.inCollection(attackablePoints)) {
-                    attackablePoints.add(newPoint);
+        for (int range : ranges) {
+            HashMap<Integer, Integer> xyPossibilities = getRangePossibilities(range);
+            for (Integer x : xyPossibilities.keySet()) {
+                Integer y = xyPossibilities.get(x);
+                // + x + y, + x -y, -x + y, -x -y
+                // Range 2: 0 2, 1 1, 2 0
+                Point[] tempPoints = new Point[4];
+                Point point1 = new Point(point.getX() + x, point.getY() + y);
+                tempPoints[0] = point1;
+                Point point2 = new Point(point.getX() + x, point.getY() - y);
+                tempPoints[1] = point2;
+                Point point3 = new Point(point.getX() - x, point.getY() + y);
+                tempPoints[2] = point3;
+                Point point4 = new Point(point.getX() - x, point.getY() - y);
+                tempPoints[3] = point4;
+
+                for (Point tempPoint : tempPoints) {
+                    if (!tempPoint.inCollection(attackablePoints)) {
+                        attackablePoints.add(tempPoint);
+                    }
                 }
             }
         }
@@ -50,21 +50,12 @@ public class CombatSystem {
         return attackablePoints;
     }
 
-    private ArrayList<Point> getAttackablePoints(CombatComponent combatComponent, Point point) {
-        ArrayList<Point> attackablePoints = new ArrayList<>();
-        int[] ranges = combatComponent.getWeapon().getRanges();
-        for (int i = 0; i < ranges.length; i++) {
-            int range = ranges[i];
-            Point leftPoint = new Point(point.getX() - range, point.getY());
-            attackablePoints.add(leftPoint);
-            Point rightPoint = new Point(point.getX() + range, point.getY());
-            attackablePoints.add(rightPoint);
-            Point upPoint = new Point(point.getX(), point.getY() - range);
-            attackablePoints.add(upPoint);
-            Point downPoint = new Point(point.getX(), point.getY() + range);
-            attackablePoints.add(downPoint);
+    private HashMap<Integer, Integer> getRangePossibilities(int range) {
+        HashMap<Integer, Integer> xyPossibilities = new HashMap<>();
+        for (int i = 0; i <= range; i++) {
+            xyPossibilities.put(i, range - i);
         }
-        return attackablePoints;
+        return xyPossibilities;
     }
 
     public void completeCombat(Unit attacker, Unit defender, ArrayList<Unit> units) {

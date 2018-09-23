@@ -17,4 +17,14 @@ public class Weapon {
     public int[] getRanges() {
         return ranges;
     }
+
+    public int getMaxRange() {
+        int max = ranges[0];
+        for (int range : ranges) {
+            if (range > max) {
+                max = range;
+            }
+        }
+        return max;
+    }
 }
