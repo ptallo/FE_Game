@@ -10,6 +10,7 @@ import javafx.scene.input.KeyEvent;
 import model.cursor.Cursor;
 import model.cursor.SelectionIndicator;
 import model.map.Map;
+import model.states.UnitSelectedState;
 import model.unit.Unit;
 import model.unit.UnitEnum;
 import util.Point;
@@ -43,6 +44,8 @@ public class Game {
     private ArrayList<Player> players;
     private Player currentPlayer;
 
+    private UnitSelectedState unitSelectedState = new UnitSelectedState(this);
+
     public Game() {
         players = new ArrayList<>();
         players.add(new Player());
@@ -66,7 +69,7 @@ public class Game {
         } else if (actionInfoItem.getDrawItem()) {
             handleKeyEventSquareSelected(event);
         } else {
-            handleKeyEventSelectedUnit(event);
+            unitSelectedState.handleKeyEvent(event);
         }
     }
 
@@ -81,7 +84,7 @@ public class Game {
         } else if (actionInfoItem.getDrawItem()) {
             drawSelectedSquare(gc, w, h);
         } else {
-            drawSelectedUnit(gc, w, h);
+            unitSelectedState.draw(gc, w, h);
         }
     }
 
@@ -128,57 +131,6 @@ public class Game {
         playerTurnInfoItem.showInfo(w * 0.02, w * 0.02, gc, playerMap);
     }
 
-    private void handleKeyEventSelectedUnit(KeyEvent event) {
-        if (event.getCode() == KeyCode.UP) {
-            cursor.movePoint(0, -1, map);
-            handleCursorMoved();
-        } else if (event.getCode() == KeyCode.DOWN) {
-            cursor.movePoint(0, 1, map);
-            handleCursorMoved();
-        } else if (event.getCode() == KeyCode.LEFT) {
-            cursor.movePoint(-1, 0, map);
-            handleCursorMoved();
-        } else if (event.getCode() == KeyCode.RIGHT) {
-            cursor.movePoint(1, 0, map);
-            handleCursorMoved();
-        } else if (event.getCode() == KeyCode.ENTER) {
-            List<PhysicsComponent> componentList = units.stream().map(Unit::getPhysicsComponent).collect(Collectors.toList());
-            physicsSystem.setPoint(selectedUnit.getPhysicsComponent(), cursor.getSelectionPoint(), map, componentList);
-            actionInfoItem.setDrawItem(true);
-        } else if (event.getCode() == KeyCode.ESCAPE) {
-            selectedUnit = null;
-        }
-    }
-
-    private void drawSelectedUnit(GraphicsContext gc, double w, double h) {
-        List<PhysicsComponent> componentList = units.stream().map(Unit::getPhysicsComponent).collect(Collectors.toList());
-        physicsSystem.drawMovableArea(selectedUnit.getPhysicsComponent(), gc, map, componentList);
-        renderSystem.draw(selectionIndicator.getRenderComponent(), gc, selectedUnit.getPhysicsComponent().getPoint());
-
-        for (Unit unit : units) {
-            if (unit.getRenderComponent() != null) {
-                boolean drawGrey = false;
-                if (currentPlayer == unit.getOwner() && currentPlayerUnitsLeft.indexOf(unit) == -1) {
-                    drawGrey = true;
-                }
-
-                renderSystem.draw(
-                        unit.getRenderComponent(),
-                        gc,
-                        unit.getPhysicsComponent().getPoint(),
-                        drawGrey
-                );
-            }
-        }
-
-        Point selectionPoint = cursor.getSelectionPoint();
-        renderSystem.draw(cursor.getRenderComponent(), gc, selectionPoint);
-
-        HashMap<String, String> playerMap = new HashMap<>();
-        playerMap.put("Player", String.valueOf(players.indexOf(currentPlayer) + 1));
-        playerTurnInfoItem.showInfo(w * 0.02, w * 0.02, gc, playerMap);
-    }
-
     private void handleKeyEventSquareSelected(KeyEvent event) {
         if (event.getCode() == KeyCode.UP) {
             actionInfoItem.changeOption(-1);
@@ -193,7 +145,7 @@ public class Game {
                 currentPlayerUnitsLeft.remove(selectedUnit);
                 selectedUnit = null;
             }
-            
+
             actionInfoItem.setDrawItem(false);
         } else if (event.getCode() == KeyCode.ESCAPE) {
             // Move the Unit back to its previous position
@@ -236,7 +188,7 @@ public class Game {
         playerTurnInfoItem.showInfo(w * 0.02, w * 0.02, gc, playerMap);
     }
 
-    private void handleCursorMoved() {
+    public void handleCursorMoved() {
         Unit hoveredUnit = null;
         for (Unit unit : currentPlayerUnitsLeft) {
             if (cursor.getSelectionPoint().equals(unit.getPhysicsComponent().getPoint())) {
@@ -272,5 +224,53 @@ public class Game {
             options.add("Fight");
         }
         return options;
+    }
+
+    public Cursor getCursor() {
+        return cursor;
+    }
+
+    public Map getMap() {
+        return map;
+    }
+
+    public ArrayList<Unit> getUnits() {
+        return units;
+    }
+
+    public Unit getSelectedUnit() {
+        return selectedUnit;
+    }
+
+    public void setSelectedUnit(Unit selectedUnit) {
+        this.selectedUnit = selectedUnit;
+    }
+
+    public ActionInfoItem getActionInfoItem() {
+        return actionInfoItem;
+    }
+
+    public SelectionIndicator getSelectionIndicator() {
+        return selectionIndicator;
+    }
+
+    public InfoItem getPlayerTurnInfoItem() {
+        return playerTurnInfoItem;
+    }
+
+    public ArrayList<Unit> getCurrentPlayerUnitsLeft() {
+        return currentPlayerUnitsLeft;
+    }
+
+    public Unit getHoveredUnit() {
+        return hoveredUnit;
+    }
+
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
     }
 }
