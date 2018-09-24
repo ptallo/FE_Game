@@ -1,22 +1,31 @@
 package components.combat;
 
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import model.map.Map;
 import model.unit.Unit;
 import util.Point;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 public class CombatSystem {
 
-    public void drawAttackablePoints(GraphicsContext gc, CombatComponent combatComponent, Point point) {
-        ArrayList<Point> points = getAttackablePoints(combatComponent, point);
-        for (Point aPoint : points) {
-            gc.setFill(Color.rgb(255, 0, 0, 0.2));
-            gc.fillRect(aPoint.getRealX(), aPoint.getRealY(), Map.Tile_Width, Map.Tile_Height);
+    public ArrayList<Unit> getAttackableUnits(ArrayList<Unit> units, Unit unit) {
+        units = units.stream()
+                .filter(unit1 -> unit.getOwner() != unit1.getOwner())
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        ArrayList<Point> attackablePoints = new CombatSystem().getAttackablePoints(unit.getCombatComponent(), unit.getPhysicsComponent().getPoint());
+
+        ArrayList<Unit> attackableUnits = new ArrayList<>();
+        for (Point point : attackablePoints) {
+            for (Unit aUnit : units) {
+                if (point.equals(aUnit.getPhysicsComponent().getPoint())) {
+                    attackableUnits.add(aUnit);
+                }
+            }
         }
+
+        return attackableUnits;
     }
 
     public ArrayList<Point> getAttackablePoints(CombatComponent combatComponent, Point point) {

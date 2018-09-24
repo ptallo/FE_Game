@@ -49,8 +49,8 @@ public class Game {
         players.add(new Player());
 
         units = new ArrayList<>();
-        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(0), 0,14, 7));
-        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(0), 0,14, 5));
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(0), 0,7, 7));
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(0), 0,7, 5));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 1, 6));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 1, 4));
 
@@ -71,6 +71,11 @@ public class Game {
     }
 
     public void draw(GraphicsContext gc, double w, double h) {
+        cursor.handleTransform(gc, w, h);
+        gc.clearRect(-gc.getTransform().getTx(), -gc.getTransform().getTy(), w, h);
+
+        map.draw(gc);
+
         if (selectedUnit == null) {
             drawNoUnit(gc, w, h);
         } else if (actionInfoItem.getDrawItem()) {
@@ -96,15 +101,9 @@ public class Game {
         } else if (event.getCode() == KeyCode.ENTER) {
             this.selectedUnit = hoveredUnit;
         }
-        checkChangeTurn();
     }
 
     private void drawNoUnit(GraphicsContext gc, double w, double h) {
-        cursor.handleTransform(gc, w, h);
-        gc.clearRect(-gc.getTransform().getTx(), -gc.getTransform().getTy(), w, h);
-
-        map.draw(gc);
-
         for (Unit unit : units) {
             if (unit.getRenderComponent() != null) {
                 boolean drawGrey = false;
@@ -146,15 +145,12 @@ public class Game {
             List<PhysicsComponent> componentList = units.stream().map(Unit::getPhysicsComponent).collect(Collectors.toList());
             physicsSystem.setPoint(selectedUnit.getPhysicsComponent(), cursor.getSelectionPoint(), map, componentList);
             actionInfoItem.setDrawItem(true);
+        } else if (event.getCode() == KeyCode.ESCAPE) {
+            selectedUnit = null;
         }
     }
 
     private void drawSelectedUnit(GraphicsContext gc, double w, double h) {
-        cursor.handleTransform(gc, w, h);
-        gc.clearRect(-gc.getTransform().getTx(), -gc.getTransform().getTy(), w, h);
-
-        map.draw(gc);
-
         List<PhysicsComponent> componentList = units.stream().map(Unit::getPhysicsComponent).collect(Collectors.toList());
         physicsSystem.drawMovableArea(selectedUnit.getPhysicsComponent(), gc, map, componentList);
         renderSystem.draw(selectionIndicator.getRenderComponent(), gc, selectedUnit.getPhysicsComponent().getPoint());
@@ -189,27 +185,25 @@ public class Game {
         } else if (event.getCode() == KeyCode.DOWN) {
             actionInfoItem.changeOption(1);
         } else if (event.getCode() == KeyCode.ENTER) {
-            // Get Selected Action
-            // Then execute Selected Action
-
-            currentPlayerUnitsLeft.remove(selectedUnit);
-            selectedUnit = null;
+            ArrayList<String> options = getOptions(selectedUnit);
+            String selectedOption = options.get(actionInfoItem.getOptionIndex());
+            if (selectedOption.equalsIgnoreCase("Fight")) {
+//                 combatSystem.completeCombat(selectedUnit);
+            } else {
+                currentPlayerUnitsLeft.remove(selectedUnit);
+                selectedUnit = null;
+            }
+            
             actionInfoItem.setDrawItem(false);
         } else if (event.getCode() == KeyCode.ESCAPE) {
             // Move the Unit back to its previous position
             selectedUnit.getPhysicsComponent().revertPosition();
             actionInfoItem.setDrawItem(false);
         }
+        checkChangeTurn();
     }
 
     private void drawSelectedSquare(GraphicsContext gc, double w, double h) {
-        cursor.handleTransform(gc, w, h);
-        gc.clearRect(-gc.getTransform().getTx(), -gc.getTransform().getTy(), w, h);
-
-        map.draw(gc);
-
-        combatSystem.drawAttackablePoints(gc, selectedUnit.getCombatComponent(), selectedUnit.getPhysicsComponent().getPoint());
-
         for (Unit unit : units) {
             if (unit.getRenderComponent() != null) {
                 boolean drawGrey = false;
@@ -234,7 +228,7 @@ public class Game {
                         selectionPoint.getX() + 1 + selectedUnit.getCombatComponent().getWeapon().getMaxRange(),
                         selectionPoint.getY()
                 ),
-                selectedUnit.getOptions()
+                getOptions(selectedUnit)
         );
 
         HashMap<String, String> playerMap = new HashMap<>();
@@ -269,5 +263,14 @@ public class Game {
             cursor.setPoint(unit.getPhysicsComponent().getPoint(), map);
             hoveredUnit = unit;
         }
+    }
+
+    private ArrayList<String> getOptions(Unit unit) {
+        ArrayList<String> options = new ArrayList<>();
+        options.add("Wait");
+        if (combatSystem.getAttackableUnits(units, unit).size() != 0) {
+            options.add("Fight");
+        }
+        return options;
     }
 }

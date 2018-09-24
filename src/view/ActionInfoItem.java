@@ -20,20 +20,12 @@ public class ActionInfoItem {
     private int optionIndex = 0;
     private List<? extends String> options;
 
-    public void draw(GraphicsContext gc, Point point) {
-        if (options == null) {
-            throw new RuntimeException("No options available, please supply options before calling this method");
-        }
-
-        draw(gc, point, options);
-    }
-
     public void draw(GraphicsContext gc, Point point, List<? extends String> options) {
         if (drawItem) {
             boolean optionsEqual = true;
             if (this.options != null && options != null) {
                 for (int i = 0; i < options.size(); i++) {
-                    if (!options.get(i).equalsIgnoreCase(this.options.get(i))) {
+                    if (options.size() - 1 > i && this.options.size() - 1 > i && !options.get(i).equalsIgnoreCase(this.options.get(i))) {
                         optionsEqual = false;
                     }
                 }
@@ -123,5 +115,9 @@ public class ActionInfoItem {
             this.optionIndex = 0;
         }
         this.drawItem = drawItem;
+    }
+
+    public int getOptionIndex() {
+        return optionIndex;
     }
 }
