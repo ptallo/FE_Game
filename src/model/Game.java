@@ -10,6 +10,8 @@ import javafx.scene.input.KeyEvent;
 import model.cursor.Cursor;
 import model.cursor.SelectionIndicator;
 import model.map.Map;
+import model.states.NoUnitSelectedState;
+import model.states.SquareSelectedState;
 import model.states.UnitSelectedState;
 import model.unit.Unit;
 import model.unit.UnitEnum;
@@ -45,6 +47,8 @@ public class Game {
     private Player currentPlayer;
 
     private UnitSelectedState unitSelectedState = new UnitSelectedState(this);
+    private NoUnitSelectedState noUnitSelectedState = new NoUnitSelectedState(this);
+    private SquareSelectedState squareSelectedState = new SquareSelectedState(this);
 
     public Game() {
         players = new ArrayList<>();
@@ -65,9 +69,9 @@ public class Game {
     public void handleEvent(KeyEvent event) {
         // States : No Unit Selected, Unit Selected, Square Selected, Action Selected
         if (selectedUnit == null) {
-            handleKeyEventNoUnit(event);
+            noUnitSelectedState.handleKeyEvent(event);
         } else if (actionInfoItem.getDrawItem()) {
-            handleKeyEventSquareSelected(event);
+            squareSelectedState.handleKeyEvent(event);
         } else {
             unitSelectedState.handleKeyEvent(event);
         }
@@ -80,112 +84,12 @@ public class Game {
         map.draw(gc);
 
         if (selectedUnit == null) {
-            drawNoUnit(gc, w, h);
+            noUnitSelectedState.draw(gc, w, h);
         } else if (actionInfoItem.getDrawItem()) {
-            drawSelectedSquare(gc, w, h);
+            squareSelectedState.draw(gc, w, h);
         } else {
             unitSelectedState.draw(gc, w, h);
         }
-    }
-
-    private void handleKeyEventNoUnit(KeyEvent event) {
-        if (event.getCode() == KeyCode.UP) {
-            cursor.movePoint(0, -1, map);
-            handleCursorMoved();
-        } else if (event.getCode() == KeyCode.DOWN) {
-            cursor.movePoint(0, 1, map);
-            handleCursorMoved();
-        } else if (event.getCode() == KeyCode.LEFT) {
-            cursor.movePoint(-1, 0, map);
-            handleCursorMoved();
-        } else if (event.getCode() == KeyCode.RIGHT) {
-            cursor.movePoint(1, 0, map);
-            handleCursorMoved();
-        } else if (event.getCode() == KeyCode.ENTER) {
-            this.selectedUnit = hoveredUnit;
-        }
-    }
-
-    private void drawNoUnit(GraphicsContext gc, double w, double h) {
-        for (Unit unit : units) {
-            if (unit.getRenderComponent() != null) {
-                boolean drawGrey = false;
-                if (currentPlayer == unit.getOwner() && currentPlayerUnitsLeft.indexOf(unit) == -1) {
-                    drawGrey = true;
-                }
-
-                renderSystem.draw(
-                        unit.getRenderComponent(),
-                        gc,
-                        unit.getPhysicsComponent().getPoint(),
-                        drawGrey
-                );
-            }
-        }
-
-        Point selectionPoint = cursor.getSelectionPoint();
-        renderSystem.draw(cursor.getRenderComponent(), gc, selectionPoint);
-
-        HashMap<String, String> playerMap = new HashMap<>();
-        playerMap.put("Player", String.valueOf(players.indexOf(currentPlayer) + 1));
-        playerTurnInfoItem.showInfo(w * 0.02, w * 0.02, gc, playerMap);
-    }
-
-    private void handleKeyEventSquareSelected(KeyEvent event) {
-        if (event.getCode() == KeyCode.UP) {
-            actionInfoItem.changeOption(-1);
-        } else if (event.getCode() == KeyCode.DOWN) {
-            actionInfoItem.changeOption(1);
-        } else if (event.getCode() == KeyCode.ENTER) {
-            ArrayList<String> options = getOptions(selectedUnit);
-            String selectedOption = options.get(actionInfoItem.getOptionIndex());
-            if (selectedOption.equalsIgnoreCase("Fight")) {
-//                 combatSystem.completeCombat(selectedUnit);
-            } else {
-                currentPlayerUnitsLeft.remove(selectedUnit);
-                selectedUnit = null;
-            }
-
-            actionInfoItem.setDrawItem(false);
-        } else if (event.getCode() == KeyCode.ESCAPE) {
-            // Move the Unit back to its previous position
-            selectedUnit.getPhysicsComponent().revertPosition();
-            actionInfoItem.setDrawItem(false);
-        }
-        checkChangeTurn();
-    }
-
-    private void drawSelectedSquare(GraphicsContext gc, double w, double h) {
-        for (Unit unit : units) {
-            if (unit.getRenderComponent() != null) {
-                boolean drawGrey = false;
-                if (currentPlayer == unit.getOwner() && currentPlayerUnitsLeft.indexOf(unit) == -1) {
-                    drawGrey = true;
-                }
-
-                renderSystem.draw(
-                        unit.getRenderComponent(),
-                        gc,
-                        unit.getPhysicsComponent().getPoint(),
-                        drawGrey
-                );
-            }
-        }
-
-        Point selectionPoint = cursor.getSelectionPoint();
-        renderSystem.draw(cursor.getRenderComponent(), gc, selectionPoint);
-        actionInfoItem.draw(
-                gc,
-                new Point(
-                        selectionPoint.getX() + 1 + selectedUnit.getCombatComponent().getWeapon().getMaxRange(),
-                        selectionPoint.getY()
-                ),
-                getOptions(selectedUnit)
-        );
-
-        HashMap<String, String> playerMap = new HashMap<>();
-        playerMap.put("Player", String.valueOf(players.indexOf(currentPlayer) + 1));
-        playerTurnInfoItem.showInfo(w * 0.02, w * 0.02, gc, playerMap);
     }
 
     public void handleCursorMoved() {
@@ -198,7 +102,7 @@ public class Game {
         this.hoveredUnit = hoveredUnit;
     }
 
-    private void checkChangeTurn() {
+    public void checkChangeTurn() {
         if (currentPlayerUnitsLeft.size() == 0) {
             int index = players.indexOf(currentPlayer);
             if (index < players.size() - 1) {
@@ -217,7 +121,7 @@ public class Game {
         }
     }
 
-    private ArrayList<String> getOptions(Unit unit) {
+    public ArrayList<String> getOptions(Unit unit) {
         ArrayList<String> options = new ArrayList<>();
         options.add("Wait");
         if (combatSystem.getAttackableUnits(units, unit).size() != 0) {

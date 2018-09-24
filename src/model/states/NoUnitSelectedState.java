@@ -1,7 +1,5 @@
 package model.states;
 
-import components.combat.CombatSystem;
-import components.physics.PhysicsComponent;
 import components.physics.PhysicsSystem;
 import components.render.RenderSystem;
 import javafx.scene.canvas.GraphicsContext;
@@ -11,18 +9,16 @@ import model.Game;
 import model.unit.Unit;
 import util.Point;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
 
-public class UnitSelectedState implements StateInterface {
+public class NoUnitSelectedState implements StateInterface {
+
     private RenderSystem renderSystem = new RenderSystem();
     private PhysicsSystem physicsSystem = new PhysicsSystem();
 
     private Game game;
 
-    public UnitSelectedState(Game game) {
+    public NoUnitSelectedState(Game game) {
         this.game = game;
     }
 
@@ -41,22 +37,13 @@ public class UnitSelectedState implements StateInterface {
             game.getCursor().movePoint(1, 0, game.getMap());
             game.handleCursorMoved();
         } else if (event.getCode() == KeyCode.ENTER) {
-            List<PhysicsComponent> componentList = game.getUnits().stream().map(Unit::getPhysicsComponent).collect(Collectors.toList());
-            physicsSystem.setPoint(game.getSelectedUnit().getPhysicsComponent(), game.getCursor().getSelectionPoint(), game.getMap(), componentList);
-            game.getActionInfoItem().setDrawItem(true);
-        } else if (event.getCode() == KeyCode.ESCAPE) {
-            game.setSelectedUnit(null);
+            game.setSelectedUnit(game.getHoveredUnit());
         }
     }
 
     @Override
     public void draw(GraphicsContext gc, double w, double h) {
-        ArrayList<Unit> units = game.getUnits();
-        List<PhysicsComponent> componentList = units.stream().map(Unit::getPhysicsComponent).collect(Collectors.toList());
-        physicsSystem.drawMovableArea(game.getSelectedUnit().getPhysicsComponent(), gc, game.getMap(), componentList);
-        renderSystem.draw(game.getSelectionIndicator().getRenderComponent(), gc, game.getSelectedUnit().getPhysicsComponent().getPoint());
-
-        for (Unit unit : units) {
+        for (Unit unit : game.getUnits()) {
             if (unit.getRenderComponent() != null) {
                 boolean drawGrey = false;
                 if (game.getCurrentPlayer() == unit.getOwner() && game.getCurrentPlayerUnitsLeft().indexOf(unit) == -1) {
