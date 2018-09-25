@@ -27,6 +27,7 @@ public class Game {
     private Cursor cursor = new Cursor();
     private SelectionIndicator selectionIndicator = new SelectionIndicator();
     private InfoItem playerTurnInfoItem = new InfoItem();
+    private InfoItem unitInfoItem = new InfoItem();
     private ActionInfoItem actionInfoItem = new ActionInfoItem();
 
     private ArrayList<Unit> units;

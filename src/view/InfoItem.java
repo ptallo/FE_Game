@@ -4,6 +4,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import model.cursor.Cursor;
+import util.Point;
 import util.Rectangle;
 
 import java.util.ArrayList;
@@ -15,6 +17,10 @@ public class InfoItem {
     private final int fontSize = 14;
     private final int textBuffer = 6;
     private final Font font = new Font("Monospaced", fontSize);
+
+    public double showInfo(Point point, GraphicsContext gc, HashMap<String, String> infoMap) {
+        return showInfo(point.getRealX(), point.getRealY(), gc, infoMap);
+    }
 
     public double showInfo(double x, double y, GraphicsContext gc, HashMap<String, String> infoMap) {
         Rectangle infoRect = getInfoRectangle(x, y, infoMap);

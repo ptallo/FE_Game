@@ -1,6 +1,5 @@
 package model.states;
 
-import components.combat.CombatSystem;
 import components.physics.PhysicsComponent;
 import components.physics.PhysicsSystem;
 import components.render.RenderSystem;
@@ -74,6 +73,8 @@ public class UnitSelectedState implements StateInterface {
 
         Point selectionPoint = game.getCursor().getSelectionPoint();
         renderSystem.draw(game.getCursor().getRenderComponent(), gc, selectionPoint);
+
+        game.getUnitInfoItem().showInfo(new Point(1, 10), gc, game.getSelectedUnit().getInfo());
 
         HashMap<String, String> playerMap = new HashMap<>();
         playerMap.put("Player", String.valueOf(game.getPlayers().indexOf(game.getCurrentPlayer()) + 1));
