@@ -4,8 +4,12 @@ import components.combat.CombatComponent;
 import components.combat.WeaponEnum;
 import components.physics.PhysicsComponent;
 import components.render.RenderComponent;
+import lombok.Getter;
+import lombok.Setter;
 import model.Player;
 
+@Getter
+@Setter
 public class Unit {
     private RenderComponent renderComponent;
     private PhysicsComponent physicsComponent;
@@ -19,25 +23,5 @@ public class Unit {
         combatComponent = new CombatComponent(10, WeaponEnum.SWORD.getInstance());
         this.owner = owner;
         this.name = path;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Player getOwner() {
-        return owner;
-    }
-
-    public RenderComponent getRenderComponent() {
-        return renderComponent;
-    }
-
-    public PhysicsComponent getPhysicsComponent() {
-        return physicsComponent;
-    }
-
-    public CombatComponent getCombatComponent() {
-        return combatComponent;
     }
 }

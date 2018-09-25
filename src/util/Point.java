@@ -1,10 +1,14 @@
 package util;
 
+import lombok.Getter;
+import lombok.Setter;
 import model.map.Map;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
+@Getter
+@Setter
 public class Point {
 
     private Integer x;
@@ -15,24 +19,8 @@ public class Point {
         this.y = y;
     }
 
-    public Integer getX() {
-        return x;
-    }
-
-    public void setX(Integer x) {
-        this.x = x;
-    }
-
     public double getRealX() {
         return x * Map.Tile_Width;
-    }
-
-    public Integer getY() {
-        return y;
-    }
-
-    public void setY(Integer y) {
-        this.y = y;
     }
 
     public double getRealY() {

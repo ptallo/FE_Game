@@ -1,5 +1,10 @@
 package util;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class Rectangle {
 
     private double x;
@@ -12,30 +17,6 @@ public class Rectangle {
         this.y = y;
         this.width = width;
         this.height = height;
-    }
-
-    public double getX() {
-        return x;
-    }
-
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public void setY(double y) {
-        this.y = y;
-    }
-
-    public double getWidth() {
-        return width;
-    }
-
-    public double getHeight() {
-        return height;
     }
 
     public boolean equals(Rectangle rectangle) {

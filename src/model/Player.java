@@ -1,15 +1,14 @@
 package model;
 
+import lombok.Getter;
+
 import java.util.UUID;
 
+@Getter
 public class Player {
     private String uuid;
 
-    public Player() {
+    Player() {
         this.uuid = UUID.randomUUID().toString();
-    }
-
-    public String getUuid() {
-        return uuid;
     }
 }

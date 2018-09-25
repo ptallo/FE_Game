@@ -4,11 +4,15 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
+import lombok.Getter;
+import lombok.Setter;
 import util.TeamColorManager;
 
 import java.io.File;
 import java.util.ArrayList;
 
+@Getter
+@Setter
 public class RenderComponent {
     private long lastAnimationTime;
     private long animationDuration;
@@ -37,41 +41,5 @@ public class RenderComponent {
 
     public RenderComponent(String path, double frameWidth, double frameHeight, long animationDuration) {
         this(path, frameWidth, frameHeight, animationDuration, -1);
-    }
-
-    public long getLastAnimationTime() {
-        return lastAnimationTime;
-    }
-
-    public long getAnimationDuration() {
-        return animationDuration;
-    }
-
-    public int getFrameCount() {
-        return frameCount;
-    }
-
-    public int getCurrentFrame() {
-        return currentFrame;
-    }
-
-    public double getFrameWidth() {
-        return frameWidth;
-    }
-
-    public double getFrameHeight() {
-        return frameHeight;
-    }
-
-    public Image getSelectionImage() {
-        return selectionImage;
-    }
-
-    public void setAnimationDuration(long animationDuration) {
-        this.animationDuration = animationDuration;
-    }
-
-    public void setCurrentFrame(int currentFrame) {
-        this.currentFrame = currentFrame;
     }
 }

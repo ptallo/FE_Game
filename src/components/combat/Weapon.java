@@ -1,5 +1,10 @@
 package components.combat;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class Weapon {
 
     private int damage;
@@ -8,14 +13,6 @@ public class Weapon {
     public Weapon(int damage, int... range) {
         this.damage = damage;
         this.ranges = range;
-    }
-
-    public int getDamage() {
-        return damage;
-    }
-
-    public int[] getRanges() {
-        return ranges;
     }
 
     public int getMaxRange() {

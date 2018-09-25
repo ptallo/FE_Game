@@ -1,5 +1,10 @@
 package components.combat;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class CombatComponent {
 
     private int healthCap;
@@ -16,31 +21,11 @@ public class CombatComponent {
         this.weapon = weapon;
     }
 
-    public Weapon getWeapon() {
-        return weapon;
-    }
-
-    public void setWeapon(Weapon weapon) {
-        this.weapon = weapon;
-    }
-
-    public int getHealthCap() {
-        return healthCap;
-    }
-
-    public int getCurrentHealth() {
-        return currentHealth;
-    }
-
-    public void setCurrentHealth(int currentHealth) {
-        this.currentHealth = currentHealth;
-    }
-
-    public boolean isAlive() {
+    boolean isAlive() {
         return currentHealth > 0;
     }
 
-    public boolean isDead(){
+    boolean isDead(){
         return !isAlive();
     }
 }
