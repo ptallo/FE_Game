@@ -8,6 +8,7 @@ import lombok.Setter;
 import model.cursor.Cursor;
 import model.cursor.SelectionIndicator;
 import model.map.Map;
+import model.states.FightSelectionState;
 import model.states.NoUnitSelectedState;
 import model.states.SquareSelectedState;
 import model.states.UnitSelectedState;
@@ -38,6 +39,7 @@ public class Game {
     private UnitSelectedState unitSelectedState = new UnitSelectedState(this);
     private NoUnitSelectedState noUnitSelectedState = new NoUnitSelectedState(this);
     private SquareSelectedState squareSelectedState = new SquareSelectedState(this);
+    private FightSelectionState fightSelectionState = new FightSelectionState(this);
 
     public Game() {
         players = new ArrayList<>();

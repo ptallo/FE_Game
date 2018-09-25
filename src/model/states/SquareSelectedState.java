@@ -37,7 +37,7 @@ public class SquareSelectedState implements StateInterface {
             ArrayList<String> options = game.getOptions(game.getSelectedUnit());
             String selectedOption = options.get(game.getActionInfoItem().getOptionIndex());
             if (selectedOption.equalsIgnoreCase("Fight")) {
-//                 combatSystem.completeCombat(selectedUnit);
+                // Go to combat state
             } else {
                 game.getCurrentPlayerUnitsLeft().remove(game.getSelectedUnit());
                 game.setSelectedUnit(null);
@@ -85,10 +85,7 @@ public class SquareSelectedState implements StateInterface {
         renderSystem.draw(game.getCursor().getRenderComponent(), gc, selectionPoint);
         game.getActionInfoItem().draw(
                 gc,
-                new Point(
-                        selectionPoint.getX() + 1 + selectedUnit.getCombatComponent().getWeapon().getMaxRange(),
-                        selectionPoint.getY()
-                ),
+                new Point(selectionPoint.getX() + 1 + selectedUnit.getCombatComponent().getWeapon().getMaxRange(), selectionPoint.getY()),
                 game.getOptions(selectedUnit)
         );
 
