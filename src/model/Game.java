@@ -1,11 +1,7 @@
 package model;
 
 import components.combat.CombatSystem;
-import components.physics.PhysicsComponent;
-import components.physics.PhysicsSystem;
-import components.render.RenderSystem;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import model.cursor.Cursor;
 import model.cursor.SelectionIndicator;
@@ -15,34 +11,23 @@ import model.states.SquareSelectedState;
 import model.states.UnitSelectedState;
 import model.unit.Unit;
 import model.unit.UnitEnum;
-import util.Point;
 import view.ActionInfoItem;
 import view.InfoItem;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class Game {
-
-    private RenderSystem renderSystem = new RenderSystem();
-    private PhysicsSystem physicsSystem = new PhysicsSystem();
-    private CombatSystem combatSystem = new CombatSystem();
-
     private Map map = new Map();
     private Cursor cursor = new Cursor();
     private SelectionIndicator selectionIndicator = new SelectionIndicator();
     private InfoItem playerTurnInfoItem = new InfoItem();
-
     private ActionInfoItem actionInfoItem = new ActionInfoItem();
 
     private ArrayList<Unit> units;
     private ArrayList<Unit> currentPlayerUnitsLeft;
     private Unit selectedUnit;
     private Unit hoveredUnit;
-
     private ArrayList<Player> players;
     private Player currentPlayer;
 
@@ -124,7 +109,7 @@ public class Game {
     public ArrayList<String> getOptions(Unit unit) {
         ArrayList<String> options = new ArrayList<>();
         options.add("Wait");
-        if (combatSystem.getAttackableUnits(units, unit).size() != 0) {
+        if (new CombatSystem().getAttackableUnits(units, unit).size() != 0) {
             options.add("Fight");
         }
         return options;
