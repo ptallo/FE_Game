@@ -2,9 +2,13 @@ package model.cursor;
 
 import components.render.RenderComponent;
 import javafx.scene.canvas.GraphicsContext;
+import lombok.Getter;
+import lombok.Setter;
 import util.Point;
 import model.map.Map;
 
+@Getter
+@Setter
 public class Cursor {
 
     private double xTransform = 0;
@@ -80,21 +84,5 @@ public class Cursor {
 
         xTransform = gc.getTransform().getTx();
         yTransform = gc.getTransform().getTy();
-    }
-
-    public RenderComponent getRenderComponent() {
-        return renderComponent;
-    }
-
-    public Point getSelectionPoint() {
-        return selectionPoint;
-    }
-
-    public double getxTransform() {
-        return xTransform;
-    }
-
-    public double getyTransform() {
-        return yTransform;
     }
 }
