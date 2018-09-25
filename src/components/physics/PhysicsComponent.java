@@ -1,10 +1,15 @@
 package components.physics;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import util.Point;
 
+@Getter
+@Setter
 public class PhysicsComponent {
     private Point previousPosition;
-    private Point point;
+    @Setter(AccessLevel.NONE) private Point point;
     private Integer travelDistance;
 
     public PhysicsComponent(int x, int y, int travelDistance) {
@@ -12,17 +17,9 @@ public class PhysicsComponent {
         this.travelDistance = travelDistance;
     }
 
-    public Point getPoint() {
-        return point;
-    }
-
     public void setPoint(Point point) {
         this.previousPosition = this.point;
         this.point = point;
-    }
-
-    public Integer getTravelDistance() {
-        return travelDistance;
     }
 
     public void revertPosition() {

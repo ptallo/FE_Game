@@ -3,6 +3,8 @@ package model;
 import components.combat.CombatSystem;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
+import lombok.Getter;
+import lombok.Setter;
 import model.cursor.Cursor;
 import model.cursor.SelectionIndicator;
 import model.map.Map;
@@ -17,6 +19,8 @@ import view.InfoItem;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+@Getter
+@Setter
 public class Game {
     private Map map = new Map();
     private Cursor cursor = new Cursor();
@@ -113,53 +117,5 @@ public class Game {
             options.add("Fight");
         }
         return options;
-    }
-
-    public Cursor getCursor() {
-        return cursor;
-    }
-
-    public Map getMap() {
-        return map;
-    }
-
-    public ArrayList<Unit> getUnits() {
-        return units;
-    }
-
-    public Unit getSelectedUnit() {
-        return selectedUnit;
-    }
-
-    public void setSelectedUnit(Unit selectedUnit) {
-        this.selectedUnit = selectedUnit;
-    }
-
-    public ActionInfoItem getActionInfoItem() {
-        return actionInfoItem;
-    }
-
-    public SelectionIndicator getSelectionIndicator() {
-        return selectionIndicator;
-    }
-
-    public InfoItem getPlayerTurnInfoItem() {
-        return playerTurnInfoItem;
-    }
-
-    public ArrayList<Unit> getCurrentPlayerUnitsLeft() {
-        return currentPlayerUnitsLeft;
-    }
-
-    public Unit getHoveredUnit() {
-        return hoveredUnit;
-    }
-
-    public ArrayList<Player> getPlayers() {
-        return players;
-    }
-
-    public Player getCurrentPlayer() {
-        return currentPlayer;
     }
 }

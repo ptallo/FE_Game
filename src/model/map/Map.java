@@ -2,10 +2,12 @@ package model.map;
 
 import components.render.RenderSystem;
 import javafx.scene.canvas.GraphicsContext;
+import lombok.Getter;
 import util.Point;
 
 import java.util.ArrayList;
 
+@Getter
 public class Map {
 
     private RenderSystem renderSystem = new RenderSystem();
@@ -69,10 +71,6 @@ public class Map {
             }
             mapTiles.add(newRow);
         }
-    }
-
-    public ArrayList<ArrayList<MapTile>> getMapTiles() {
-        return mapTiles;
     }
 
     public ArrayList<MapTile> getMapTilesArray() {

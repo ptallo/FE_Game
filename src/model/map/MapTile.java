@@ -1,9 +1,12 @@
 package model.map;
 
-import components.combat.CombatComponent;
 import components.physics.PhysicsComponent;
 import components.render.RenderComponent;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class MapTile {
 
     private PhysicsComponent physicsComponent;
@@ -16,25 +19,5 @@ public class MapTile {
         renderComponent = new RenderComponent(path, 32, 32, 1000);
         this.travelCost = travelCost;
         this.name = path;
-    }
-
-    public Integer getTravelCost() {
-        return travelCost;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public PhysicsComponent getPhysicsComponent() {
-        return physicsComponent;
-    }
-
-    public RenderComponent getRenderComponent() {
-        return renderComponent;
-    }
-
-    public CombatComponent getCombatComponent() {
-        return null;
     }
 }
