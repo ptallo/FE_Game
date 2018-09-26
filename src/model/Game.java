@@ -36,6 +36,7 @@ public class Game {
     private Unit hoveredUnit;
     private ArrayList<Player> players;
     private Player currentPlayer;
+    private Unit enemySelectedUnit;
 
     private UnitSelectedState unitSelectedState = new UnitSelectedState(this);
     private NoUnitSelectedState noUnitSelectedState = new NoUnitSelectedState(this);
@@ -60,7 +61,9 @@ public class Game {
 
     public void handleEvent(KeyEvent event) {
         // States : No Unit Selected, Unit Selected, Square Selected, Action Selected
-        if (selectedUnit == null) {
+        if (enemySelectedUnit != null) {
+            fightSelectionState.handleKeyEvent(event);
+        } else if (selectedUnit == null) {
             noUnitSelectedState.handleKeyEvent(event);
         } else if (actionInfoItem.getDrawItem()) {
             squareSelectedState.handleKeyEvent(event);
@@ -75,7 +78,9 @@ public class Game {
 
         map.draw(gc);
 
-        if (selectedUnit == null) {
+        if (enemySelectedUnit != null) {
+            fightSelectionState.draw(gc, w, h);
+        } else if (selectedUnit == null) {
             noUnitSelectedState.draw(gc, w, h);
         } else if (actionInfoItem.getDrawItem()) {
             squareSelectedState.draw(gc, w, h);

@@ -38,6 +38,9 @@ public class SquareSelectedState implements StateInterface {
             String selectedOption = options.get(game.getActionInfoItem().getOptionIndex());
             if (selectedOption.equalsIgnoreCase("Fight")) {
                 // Go to combat state
+                Unit enemySelectedUnit = combatSystem.getAttackableUnits(game.getUnits(), game.getSelectedUnit()).get(0);
+                game.setEnemySelectedUnit(enemySelectedUnit);
+                game.getCursor().setPoint(enemySelectedUnit.getPhysicsComponent().getPoint(), game.getMap());
             } else {
                 game.getCurrentPlayerUnitsLeft().remove(game.getSelectedUnit());
                 game.setSelectedUnit(null);

@@ -32,8 +32,15 @@ public class FightSelectionState implements StateInterface{
             // Change the selected enemy unit
         } else if (event.getCode() == KeyCode.ENTER) {
             // Complete a Fight between the Fight Unit and the Next Selected Unit
+            combatSystem.completeCombat(game.getSelectedUnit(), game.getEnemySelectedUnit(), game.getUnits());
+            game.getCurrentPlayerUnitsLeft().remove(game.getSelectedUnit());
+            game.setEnemySelectedUnit(null);
+            game.setSelectedUnit(null);
         } else if (event.getCode() == KeyCode.ESCAPE) {
             // Go back to the Square Selected State
+            game.setEnemySelectedUnit(null);
+            game.getCursor().setPoint(game.getSelectedUnit().getPhysicsComponent().getPoint(), game.getMap());
+            game.getActionInfoItem().setDrawItem(true);
         }
         game.checkChangeTurn();
     }
