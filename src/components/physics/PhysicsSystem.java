@@ -2,6 +2,7 @@ package components.physics;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import model.unit.Unit;
 import util.Point;
 import model.map.Map;
 import model.map.MapTile;
@@ -13,19 +14,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PhysicsSystem {
-    public void setPoint(PhysicsComponent component, Point point, Map map, List<PhysicsComponent> units) {
-        if (point.inCollection(getMovablePoints(component, map, units))) {
-            component.setPoint(point);
+    public void setPoint(Unit unit, Point point, Map map, List<Unit> units) {
+        if (point.inCollection(getMovablePoints(unit, map, units))) {
+            unit.getPhysicsComponent().setPoint(point);
         }
     }
 
-    public ArrayList<Point> getMovablePoints(PhysicsComponent component, Map map, List<PhysicsComponent> units) {
-
+    public ArrayList<Point> getMovablePoints(Unit unit, Map map, List<Unit> units) {
         HashMap<MapTile, Integer> costSoFar = new HashMap<>();
         HashMap<MapTile, MapTile> cameFrom = new HashMap<>();
         PriorityQueue<MapTile> frontier = new PriorityQueue<>();
 
-        MapTile startTile = map.getTileAtPoint(component.getPoint());
+        MapTile startTile = map.getTileAtPoint(unit.getPhysicsComponent().getPoint());
         costSoFar.put(startTile, 0);
         cameFrom.put(startTile, null);
         frontier.add(startTile, 0);
@@ -44,8 +44,8 @@ public class PhysicsSystem {
             for (MapTile tile : neighborTiles) {
                 int newCost = costSoFar.get(currentTile) + tile.getTravelCost();
                 if ((costSoFar.get(tile) == null || newCost < costSoFar.get(tile)) &&
-                        newCost <= component.getTravelDistance() &&
-                        pointIsMovable(map, units, tile.getPhysicsComponent().getPoint())) {
+                        newCost <= unit.getPhysicsComponent().getTravelDistance() &&
+                        pointIsMovable(map, units.stream().filter(unit1 -> unit1.getOwner() != unit.getOwner()).collect(Collectors.toList()), tile.getPhysicsComponent().getPoint())) {
                     costSoFar.put(tile, newCost);
                     frontier.add(tile, newCost);
                     cameFrom.put(tile, currentTile);
@@ -53,16 +53,29 @@ public class PhysicsSystem {
             }
         }
 
-        return costSoFar.keySet().stream()
+        ArrayList<Point> pointsCollection = costSoFar.keySet().stream()
                 .map(MapTile::getPhysicsComponent)
                 .map(PhysicsComponent::getPoint)
                 .collect(Collectors.toCollection(ArrayList::new));
+
+        ArrayList<Point> pointsToRemove = new ArrayList<>();
+        for (Unit alliedUnit : units.stream().filter(unit1 -> unit1.getOwner() == unit.getOwner()).collect(Collectors.toList())) {
+            for (Point point : pointsCollection) {
+                if (alliedUnit.getPhysicsComponent().getPoint().equals(point)) {
+                    pointsToRemove.add(point);
+                }
+            }
+        }
+
+        pointsCollection.removeAll(pointsToRemove);
+
+        return pointsCollection;
     }
 
-    private boolean pointIsMovable(Map map, List<PhysicsComponent> units, Point testPoint) {
+    private boolean pointIsMovable(Map map, List<Unit> units, Point testPoint) {
         boolean unitAtPoint = false;
-        for (PhysicsComponent unit : units) {
-            if (unit.getPoint().equals(testPoint)) {
+        for (Unit unit : units) {
+            if (unit.getPhysicsComponent().getPoint().equals(testPoint)) {
                 unitAtPoint = true;
             }
         }
@@ -71,8 +84,8 @@ public class PhysicsSystem {
         return !unitAtPoint && tileAtPoint != null;
     }
 
-    public void drawMovableArea(PhysicsComponent component, GraphicsContext gc, Map map, List<PhysicsComponent> units) {
-        List<Point> movablePoints = getMovablePoints(component, map, units);
+    public void drawMovableArea(Unit unit, GraphicsContext gc, Map map, List<Unit> units) {
+        List<Point> movablePoints = getMovablePoints(unit, map, units);
         for (Point point : movablePoints) {
             gc.setFill(Color.rgb(0, 0, 255, 0.3));
             gc.fillRect(
