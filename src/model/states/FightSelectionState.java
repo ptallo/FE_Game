@@ -12,6 +12,8 @@ import model.map.Map;
 import model.unit.Unit;
 import util.Point;
 
+import java.util.ArrayList;
+
 public class FightSelectionState implements StateInterface{
 
     private PhysicsSystem physicsSystem = new PhysicsSystem();
@@ -28,8 +30,14 @@ public class FightSelectionState implements StateInterface{
     public void handleKeyEvent(KeyEvent event) {
         if (event.getCode() == KeyCode.UP) {
             // Change the selected enemy unit
+            moveSelectedEnemyUp();
         } else if (event.getCode() == KeyCode.DOWN) {
             // Change the selected enemy unit
+            moveSelectedEnemyDown();
+        } else if (event.getCode() == KeyCode.LEFT) {
+            moveSelectedEnemyDown();
+        } else if (event.getCode() == KeyCode.RIGHT) {
+            moveSelectedEnemyUp();
         } else if (event.getCode() == KeyCode.ENTER) {
             // Complete a Fight between the Fight Unit and the Next Selected Unit
             combatSystem.completeCombat(game.getSelectedUnit(), game.getEnemySelectedUnit(), game.getUnits());
@@ -74,6 +82,30 @@ public class FightSelectionState implements StateInterface{
             }
         }
 
-        renderSystem.draw(game.getCursor().getRenderComponent(), gc, game.getCursor().getSelectionPoint());
+        renderSystem.draw(game.getCursor().getRenderComponent(), gc, game.getEnemySelectedUnit().getPhysicsComponent().getPoint());
+    }
+
+    private void moveSelectedEnemyUp() {
+        ArrayList<Unit> enemyUnits = combatSystem.getAttackableUnits(game.getUnits(), game.getSelectedUnit());
+        int index = enemyUnits.indexOf(game.getEnemySelectedUnit());
+        if (index == enemyUnits.size() - 1) {
+            index = 0;
+        } else {
+            index += 1;
+        }
+
+        game.setEnemySelectedUnit(enemyUnits.get(index));
+    }
+
+    private void moveSelectedEnemyDown() {
+        ArrayList<Unit> enemyUnits = combatSystem.getAttackableUnits(game.getUnits(), game.getSelectedUnit());
+        int index = enemyUnits.indexOf(game.getEnemySelectedUnit());
+        if (index == 0) {
+            index = enemyUnits.size() - 1;
+        } else {
+            index -= 1;
+        }
+
+        game.setEnemySelectedUnit(enemyUnits.get(index));
     }
 }

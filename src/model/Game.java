@@ -52,6 +52,7 @@ public class Game {
         units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(0), 0,7, 7));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(0), 0,7, 5));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 1, 6));
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 0, 5));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 1, 4));
 
         currentPlayerUnitsLeft = new ArrayList<>();
