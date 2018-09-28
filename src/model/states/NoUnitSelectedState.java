@@ -61,16 +61,5 @@ public class NoUnitSelectedState implements StateInterface {
 
         Point selectionPoint = game.getCursor().getSelectionPoint();
         renderSystem.draw(game.getCursor().getRenderComponent(), gc, selectionPoint);
-
-        for (Unit unit : game.getUnits()) {
-            if (unit.getPhysicsComponent().getPoint().equals(selectionPoint)) {
-                game.getUnitInfoItem().showInfo(new Point(1, 10), gc, unit.getInfo());
-                break;
-            }
-        }
-
-        HashMap<String, String> playerMap = new HashMap<>();
-        playerMap.put("Player", String.valueOf(game.getPlayers().indexOf(game.getCurrentPlayer()) + 1));
-        game.getPlayerTurnInfoItem().showInfo(w * 0.02, w * 0.02, gc, playerMap);
     }
 }

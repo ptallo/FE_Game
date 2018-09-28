@@ -13,7 +13,6 @@ import model.unit.Unit;
 import util.Point;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class SquareSelectedState implements StateInterface {
 
@@ -91,11 +90,5 @@ public class SquareSelectedState implements StateInterface {
                 new Point(selectionPoint.getX() + 1 + selectedUnit.getCombatComponent().getWeapon().getMaxRange(), selectionPoint.getY()),
                 game.getOptions(selectedUnit)
         );
-
-        game.getUnitInfoItem().showInfo(new Point(1, 10), gc, game.getSelectedUnit().getInfo());
-
-        HashMap<String, String> playerMap = new HashMap<>();
-        playerMap.put("Player", String.valueOf(game.getPlayers().indexOf(game.getCurrentPlayer()) + 1));
-        game.getPlayerTurnInfoItem().showInfo(w * 0.02, w * 0.02, gc, playerMap);
     }
 }

@@ -15,7 +15,6 @@ import model.states.UnitSelectedState;
 import model.unit.Unit;
 import model.unit.UnitEnum;
 import view.ActionInfoItem;
-import view.InfoItem;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -26,8 +25,6 @@ public class Game {
     private Map map = new Map();
     private Cursor cursor = new Cursor();
     private SelectionIndicator selectionIndicator = new SelectionIndicator();
-    private InfoItem playerTurnInfoItem = new InfoItem();
-    private InfoItem unitInfoItem = new InfoItem();
     private ActionInfoItem actionInfoItem = new ActionInfoItem();
 
     private ArrayList<Unit> units;
