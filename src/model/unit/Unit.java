@@ -8,6 +8,9 @@ import lombok.Getter;
 import lombok.Setter;
 import model.Player;
 
+import java.util.Arrays;
+import java.util.HashMap;
+
 @Getter
 @Setter
 public class Unit {
@@ -23,5 +26,16 @@ public class Unit {
         combatComponent = new CombatComponent(10, WeaponEnum.SWORD.getInstance());
         this.owner = owner;
         this.name = path;
+    }
+
+    public HashMap<String, String> getInfo() {
+        HashMap<String, String> info = new HashMap<>();
+        info.put("Owner", owner.getUuid());
+        info.put("Name", name);
+        info.put("Max Health", String.valueOf(combatComponent.getHealthCap()));
+        info.put("Current Health", String.valueOf(combatComponent.getCurrentHealth()));
+        info.put("Damage", String.valueOf(combatComponent.getWeapon().getDamage()));
+        info.put("Ranges", Arrays.toString(combatComponent.getWeapon().getRanges()));
+        return info;
     }
 }

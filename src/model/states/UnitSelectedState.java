@@ -1,6 +1,5 @@
 package model.states;
 
-import components.combat.CombatSystem;
 import components.physics.PhysicsComponent;
 import components.physics.PhysicsSystem;
 import components.render.RenderSystem;
@@ -41,8 +40,7 @@ public class UnitSelectedState implements StateInterface {
             game.getCursor().movePoint(1, 0, game.getMap());
             game.handleCursorMoved();
         } else if (event.getCode() == KeyCode.ENTER) {
-            List<PhysicsComponent> componentList = game.getUnits().stream().map(Unit::getPhysicsComponent).collect(Collectors.toList());
-            physicsSystem.setPoint(game.getSelectedUnit().getPhysicsComponent(), game.getCursor().getSelectionPoint(), game.getMap(), componentList);
+            physicsSystem.setPoint(game.getSelectedUnit(), game.getCursor().getSelectionPoint(), game.getMap(), game.getUnits());
             game.getActionInfoItem().setDrawItem(true);
         } else if (event.getCode() == KeyCode.ESCAPE) {
             game.setSelectedUnit(null);
@@ -52,8 +50,7 @@ public class UnitSelectedState implements StateInterface {
     @Override
     public void draw(GraphicsContext gc, double w, double h) {
         ArrayList<Unit> units = game.getUnits();
-        List<PhysicsComponent> componentList = units.stream().map(Unit::getPhysicsComponent).collect(Collectors.toList());
-        physicsSystem.drawMovableArea(game.getSelectedUnit().getPhysicsComponent(), gc, game.getMap(), componentList);
+        physicsSystem.drawMovableArea(game.getSelectedUnit(), gc, game.getMap(), game.getUnits());
         renderSystem.draw(game.getSelectionIndicator().getRenderComponent(), gc, game.getSelectedUnit().getPhysicsComponent().getPoint());
 
         for (Unit unit : units) {
@@ -74,6 +71,8 @@ public class UnitSelectedState implements StateInterface {
 
         Point selectionPoint = game.getCursor().getSelectionPoint();
         renderSystem.draw(game.getCursor().getRenderComponent(), gc, selectionPoint);
+
+        game.getUnitInfoItem().showInfo(new Point(1, 10), gc, game.getSelectedUnit().getInfo());
 
         HashMap<String, String> playerMap = new HashMap<>();
         playerMap.put("Player", String.valueOf(game.getPlayers().indexOf(game.getCurrentPlayer()) + 1));

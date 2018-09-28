@@ -8,6 +8,7 @@ import lombok.Setter;
 import model.cursor.Cursor;
 import model.cursor.SelectionIndicator;
 import model.map.Map;
+import model.states.FightSelectionState;
 import model.states.NoUnitSelectedState;
 import model.states.SquareSelectedState;
 import model.states.UnitSelectedState;
@@ -26,6 +27,7 @@ public class Game {
     private Cursor cursor = new Cursor();
     private SelectionIndicator selectionIndicator = new SelectionIndicator();
     private InfoItem playerTurnInfoItem = new InfoItem();
+    private InfoItem unitInfoItem = new InfoItem();
     private ActionInfoItem actionInfoItem = new ActionInfoItem();
 
     private ArrayList<Unit> units;
@@ -34,10 +36,12 @@ public class Game {
     private Unit hoveredUnit;
     private ArrayList<Player> players;
     private Player currentPlayer;
+    private Unit enemySelectedUnit;
 
     private UnitSelectedState unitSelectedState = new UnitSelectedState(this);
     private NoUnitSelectedState noUnitSelectedState = new NoUnitSelectedState(this);
     private SquareSelectedState squareSelectedState = new SquareSelectedState(this);
+    private FightSelectionState fightSelectionState = new FightSelectionState(this);
 
     public Game() {
         players = new ArrayList<>();
@@ -46,8 +50,12 @@ public class Game {
 
         units = new ArrayList<>();
         units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(0), 0,7, 7));
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(0), 0,5, 5));
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(0), 0,6, 5));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(0), 0,7, 5));
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(0), 0,8, 5));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 1, 6));
+        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 0, 5));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 1, 4));
 
         currentPlayerUnitsLeft = new ArrayList<>();
@@ -57,7 +65,9 @@ public class Game {
 
     public void handleEvent(KeyEvent event) {
         // States : No Unit Selected, Unit Selected, Square Selected, Action Selected
-        if (selectedUnit == null) {
+        if (enemySelectedUnit != null) {
+            fightSelectionState.handleKeyEvent(event);
+        } else if (selectedUnit == null) {
             noUnitSelectedState.handleKeyEvent(event);
         } else if (actionInfoItem.getDrawItem()) {
             squareSelectedState.handleKeyEvent(event);
@@ -72,7 +82,9 @@ public class Game {
 
         map.draw(gc);
 
-        if (selectedUnit == null) {
+        if (enemySelectedUnit != null) {
+            fightSelectionState.draw(gc, w, h);
+        } else if (selectedUnit == null) {
             noUnitSelectedState.draw(gc, w, h);
         } else if (actionInfoItem.getDrawItem()) {
             squareSelectedState.draw(gc, w, h);
