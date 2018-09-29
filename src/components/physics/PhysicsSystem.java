@@ -59,7 +59,7 @@ public class PhysicsSystem {
                 .collect(Collectors.toCollection(ArrayList::new));
 
         ArrayList<Point> pointsToRemove = new ArrayList<>();
-        for (Unit alliedUnit : units.stream().filter(unit1 -> unit1.getOwner() == unit.getOwner()).collect(Collectors.toList())) {
+        for (Unit alliedUnit : units.stream().filter(unit1 -> unit1.getOwner() == unit.getOwner() && unit1 != unit).collect(Collectors.toList())) {
             for (Point point : pointsCollection) {
                 if (alliedUnit.getPhysicsComponent().getPoint().equals(point)) {
                     pointsToRemove.add(point);
