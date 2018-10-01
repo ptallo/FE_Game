@@ -8,10 +8,7 @@ import lombok.Setter;
 import model.cursor.Cursor;
 import model.cursor.SelectionIndicator;
 import model.map.Map;
-import model.states.FightSelectionState;
-import model.states.NoUnitSelectedState;
-import model.states.SquareSelectedState;
-import model.states.UnitSelectedState;
+import model.states.*;
 import model.unit.Unit;
 import model.unit.UnitEnum;
 import view.ActionInfoItem;
@@ -35,12 +32,16 @@ public class Game {
     private Player currentPlayer;
     private Unit enemySelectedUnit;
 
-    private UnitSelectedState unitSelectedState = new UnitSelectedState(this);
     private NoUnitSelectedState noUnitSelectedState = new NoUnitSelectedState(this);
+    private UnitSelectedState unitSelectedState = new UnitSelectedState(this);
     private SquareSelectedState squareSelectedState = new SquareSelectedState(this);
     private FightSelectionState fightSelectionState = new FightSelectionState(this);
 
+    private StateInterface currentState;
+
     public Game() {
+        currentState = noUnitSelectedState;
+
         players = new ArrayList<>();
         players.add(new Player());
         players.add(new Player());
@@ -62,32 +63,11 @@ public class Game {
 
     public void handleEvent(KeyEvent event) {
         // States : No Unit Selected, Unit Selected, Square Selected, Action Selected
-        if (enemySelectedUnit != null) {
-            fightSelectionState.handleKeyEvent(event);
-        } else if (selectedUnit == null) {
-            noUnitSelectedState.handleKeyEvent(event);
-        } else if (actionInfoItem.getDrawItem()) {
-            squareSelectedState.handleKeyEvent(event);
-        } else {
-            unitSelectedState.handleKeyEvent(event);
-        }
+        currentState.handleKeyEvent(event);
     }
 
     public void draw(GraphicsContext gc, double w, double h) {
-        cursor.handleTransform(gc, w, h);
-        gc.clearRect(-gc.getTransform().getTx(), -gc.getTransform().getTy(), w, h);
-
-        map.draw(gc);
-
-        if (enemySelectedUnit != null) {
-            fightSelectionState.draw(gc, w, h);
-        } else if (selectedUnit == null) {
-            noUnitSelectedState.draw(gc, w, h);
-        } else if (actionInfoItem.getDrawItem()) {
-            squareSelectedState.draw(gc, w, h);
-        } else {
-            unitSelectedState.draw(gc, w, h);
-        }
+        currentState.draw(gc, w, h);
     }
 
     public void handleCursorMoved() {

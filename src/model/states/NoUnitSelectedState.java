@@ -38,11 +38,19 @@ public class NoUnitSelectedState implements StateInterface {
             game.handleCursorMoved();
         } else if (event.getCode() == KeyCode.ENTER) {
             game.setSelectedUnit(game.getHoveredUnit());
+            if (game.getSelectedUnit() != null) {
+                game.setCurrentState(game.getUnitSelectedState());
+            }
         }
     }
 
     @Override
     public void draw(GraphicsContext gc, double w, double h) {
+        game.getCursor().handleTransform(gc, w, h);
+        gc.clearRect(-gc.getTransform().getTx(), -gc.getTransform().getTy(), w, h);
+
+        game.getMap().draw(gc);
+
         for (Unit unit : game.getUnits()) {
             if (unit.getRenderComponent() != null) {
                 boolean drawGrey = false;

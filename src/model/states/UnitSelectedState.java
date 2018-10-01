@@ -41,14 +41,20 @@ public class UnitSelectedState implements StateInterface {
             game.handleCursorMoved();
         } else if (event.getCode() == KeyCode.ENTER) {
             physicsSystem.setPoint(game.getSelectedUnit(), game.getCursor().getSelectionPoint(), game.getMap(), game.getUnits());
-            game.getActionInfoItem().setDrawItem(true);
+            game.setCurrentState(game.getSquareSelectedState());
         } else if (event.getCode() == KeyCode.ESCAPE) {
             game.setSelectedUnit(null);
+            game.setCurrentState(game.getNoUnitSelectedState());
         }
     }
 
     @Override
     public void draw(GraphicsContext gc, double w, double h) {
+        game.getCursor().handleTransform(gc, w, h);
+        gc.clearRect(-gc.getTransform().getTx(), -gc.getTransform().getTy(), w, h);
+
+        game.getMap().draw(gc);
+
         ArrayList<Unit> units = game.getUnits();
         physicsSystem.drawMovableArea(game.getSelectedUnit(), gc, game.getMap(), game.getUnits());
         renderSystem.draw(game.getSelectionIndicator().getRenderComponent(), gc, game.getSelectedUnit().getPhysicsComponent().getPoint());

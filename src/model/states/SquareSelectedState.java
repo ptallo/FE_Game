@@ -40,22 +40,27 @@ public class SquareSelectedState implements StateInterface {
                 Unit enemySelectedUnit = combatSystem.getAttackableUnits(game.getUnits(), game.getSelectedUnit()).get(0);
                 game.setEnemySelectedUnit(enemySelectedUnit);
                 game.getCursor().setPoint(enemySelectedUnit.getPhysicsComponent().getPoint(), game.getMap());
+                game.setCurrentState(game.getFightSelectionState());
             } else {
                 game.getCurrentPlayerUnitsLeft().remove(game.getSelectedUnit());
                 game.setSelectedUnit(null);
+                game.setCurrentState(game.getNoUnitSelectedState());
             }
-
-            game.getActionInfoItem().setDrawItem(false);
         } else if (event.getCode() == KeyCode.ESCAPE) {
             // Move the Unit back to its previous position
             game.getSelectedUnit().getPhysicsComponent().revertPosition();
-            game.getActionInfoItem().setDrawItem(false);
+            game.setCurrentState(game.getUnitSelectedState());
         }
         game.checkChangeTurn();
     }
 
     @Override
     public void draw(GraphicsContext gc, double w, double h) {
+        game.getCursor().handleTransform(gc, w, h);
+        gc.clearRect(-gc.getTransform().getTx(), -gc.getTransform().getTy(), w, h);
+
+        game.getMap().draw(gc);
+
         Unit selectedUnit = game.getSelectedUnit();
         for (Point point : combatSystem.getAttackablePoints(selectedUnit.getCombatComponent(), selectedUnit.getPhysicsComponent().getPoint())) {
             gc.setFill(Color.rgb(255, 0, 0, 0.2));
