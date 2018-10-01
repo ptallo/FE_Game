@@ -1,23 +1,22 @@
 package model.states;
 
-import components.physics.PhysicsComponent;
 import components.physics.PhysicsSystem;
 import components.render.RenderSystem;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import model.Game;
+import model.cursor.SelectionIndicator;
 import model.unit.Unit;
 import util.Point;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class UnitSelectedState implements StateInterface {
     private RenderSystem renderSystem = new RenderSystem();
     private PhysicsSystem physicsSystem = new PhysicsSystem();
+
+    private SelectionIndicator selectionIndicator = new SelectionIndicator();
 
     private Game game;
 
@@ -57,7 +56,7 @@ public class UnitSelectedState implements StateInterface {
 
         ArrayList<Unit> units = game.getUnits();
         physicsSystem.drawMovableArea(game.getSelectedUnit(), gc, game.getMap(), game.getUnits());
-        renderSystem.draw(game.getSelectionIndicator().getRenderComponent(), gc, game.getSelectedUnit().getPhysicsComponent().getPoint());
+        renderSystem.draw(selectionIndicator.getRenderComponent(), gc, game.getSelectedUnit().getPhysicsComponent().getPoint());
 
         for (Unit unit : units) {
             if (unit.getRenderComponent() != null) {

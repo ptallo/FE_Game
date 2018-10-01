@@ -21,8 +21,6 @@ import java.util.stream.Collectors;
 public class Game {
     private Map map = new Map();
     private Cursor cursor = new Cursor();
-    private SelectionIndicator selectionIndicator = new SelectionIndicator();
-    private ActionInfoItem actionInfoItem = new ActionInfoItem();
 
     private ArrayList<Unit> units;
     private ArrayList<Unit> currentPlayerUnitsLeft;
@@ -71,6 +69,7 @@ public class Game {
     }
 
     public void handleCursorMoved() {
+        // whenever the cursor on the map is moved we handle populating the hovered unit object
         Unit hoveredUnit = null;
         for (Unit unit : currentPlayerUnitsLeft) {
             if (cursor.getSelectionPoint().equals(unit.getPhysicsComponent().getPoint())) {
@@ -81,6 +80,7 @@ public class Game {
     }
 
     public void checkChangeTurn() {
+        // this checks to see if the turn is over and if it is it switches the players turns
         if (currentPlayerUnitsLeft.size() == 0) {
             int index = players.indexOf(currentPlayer);
             if (index < players.size() - 1) {

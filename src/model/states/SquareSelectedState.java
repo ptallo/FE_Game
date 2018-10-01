@@ -11,14 +11,16 @@ import model.Game;
 import model.map.Map;
 import model.unit.Unit;
 import util.Point;
+import view.ActionInfoItem;
 
 import java.util.ArrayList;
 
 public class SquareSelectedState implements StateInterface {
 
     private RenderSystem renderSystem = new RenderSystem();
-    private PhysicsSystem physicsSystem = new PhysicsSystem();
     private CombatSystem combatSystem = new CombatSystem();
+
+    private ActionInfoItem actionInfoItem = new ActionInfoItem();
 
     private Game game;
 
@@ -29,12 +31,12 @@ public class SquareSelectedState implements StateInterface {
     @Override
     public void handleKeyEvent(KeyEvent event) {
         if (event.getCode() == KeyCode.UP) {
-            game.getActionInfoItem().changeOption(-1);
+            actionInfoItem.changeOption(-1);
         } else if (event.getCode() == KeyCode.DOWN) {
-            game.getActionInfoItem().changeOption(1);
+            actionInfoItem.changeOption(1);
         } else if (event.getCode() == KeyCode.ENTER) {
             ArrayList<String> options = game.getOptions(game.getSelectedUnit());
-            String selectedOption = options.get(game.getActionInfoItem().getOptionIndex());
+            String selectedOption = options.get(actionInfoItem.getOptionIndex());
             if (selectedOption.equalsIgnoreCase("Fight")) {
                 // Go to combat state
                 Unit enemySelectedUnit = combatSystem.getAttackableUnits(game.getUnits(), game.getSelectedUnit()).get(0);
@@ -90,7 +92,7 @@ public class SquareSelectedState implements StateInterface {
 
         Point selectionPoint = game.getCursor().getSelectionPoint();
         renderSystem.draw(game.getCursor().getRenderComponent(), gc, selectionPoint);
-        game.getActionInfoItem().draw(
+        actionInfoItem.draw(
                 gc,
                 new Point(selectionPoint.getX() + 1 + selectedUnit.getCombatComponent().getWeapon().getMaxRange(), selectionPoint.getY()),
                 game.getOptions(selectedUnit)

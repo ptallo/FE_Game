@@ -30,12 +30,8 @@ public class Unit {
 
     public HashMap<String, String> getInfo() {
         HashMap<String, String> info = new HashMap<>();
-        info.put("Owner", owner.getUuid());
-        info.put("Name", name);
-        info.put("Max Health", String.valueOf(combatComponent.getHealthCap()));
-        info.put("Current Health", String.valueOf(combatComponent.getCurrentHealth()));
-        info.put("Damage", String.valueOf(combatComponent.getWeapon().getDamage()));
-        info.put("Ranges", Arrays.toString(combatComponent.getWeapon().getRanges()));
+        info.put("Health", String.valueOf(combatComponent.getCurrentHealth()).concat(" / ").concat(String.valueOf(combatComponent.getHealthCap())));
+        info.put("Max Movement", String.valueOf(physicsComponent.getTravelDistance()));
         return info;
     }
 }
