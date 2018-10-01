@@ -1,12 +1,12 @@
 package model.states;
 
 import components.combat.CombatSystem;
-import components.physics.PhysicsSystem;
 import components.render.RenderSystem;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
+import lombok.Getter;
 import model.Game;
 import model.map.Map;
 import model.unit.Unit;
@@ -15,6 +15,7 @@ import view.ActionInfoItem;
 
 import java.util.ArrayList;
 
+@Getter
 public class SquareSelectedState implements StateInterface {
 
     private RenderSystem renderSystem = new RenderSystem();

@@ -41,6 +41,7 @@ public class UnitSelectedState implements StateInterface {
         } else if (event.getCode() == KeyCode.ENTER) {
             physicsSystem.setPoint(game.getSelectedUnit(), game.getCursor().getSelectionPoint(), game.getMap(), game.getUnits());
             game.setCurrentState(game.getSquareSelectedState());
+            game.getSquareSelectedState().getActionInfoItem().setOptionIndex(0);
         } else if (event.getCode() == KeyCode.ESCAPE) {
             game.setSelectedUnit(null);
             game.setCurrentState(game.getNoUnitSelectedState());

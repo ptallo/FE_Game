@@ -15,10 +15,9 @@ import java.util.List;
 @Setter
 public class ActionInfoItem {
 
-    private final int fontSize = 14;
     private final double xMargin = 0.3;
     private final int textBuffer = 6;
-    private final Font font = new Font("Monospaced", fontSize);
+    private final Font font = new Font("Monospaced", 14);
 
     private int optionIndex = 0;
     private List<? extends String> options;
@@ -63,10 +62,11 @@ public class ActionInfoItem {
 
         gc.setFill(Color.BLACK);
         for (int i = 0; i < options.size(); i++) {
+            gc.setFont(font);
             gc.fillText(
                     options.get(i),
                     realX + (width * xMargin),
-                    realY + (fontSize * (i + 1) + textBuffer * i)
+                    realY + (font.getSize() * (i + 1) + textBuffer * i)
             );
         }
 
@@ -74,11 +74,10 @@ public class ActionInfoItem {
         gc.setLineWidth(1);
         gc.strokeRect(
                 realX + gc.getLineWidth(),
-                realY + (optionIndex != 0 ? optionIndex * (fontSize + textBuffer) : gc.getLineWidth()),
+                realY + (optionIndex != 0 ? optionIndex * (font.getSize() + textBuffer) : gc.getLineWidth()),
                 rectWidth - (2 * gc.getLineWidth()),
-                fontSize + textBuffer - (optionIndex == 0 ? gc.getLineWidth() : 0)
+                font.getSize() + textBuffer - (optionIndex == 0 ? gc.getLineWidth() : 0)
         );
-
     }
 
     private double getWidth(Collection<? extends String> strings) {
@@ -95,7 +94,7 @@ public class ActionInfoItem {
     }
 
     private double getHeight(Collection<? extends String> strings) {
-        return fontSize * strings.size();
+        return font.getSize() * strings.size();
     }
 
     public void changeOption(int optionChange) {

@@ -8,6 +8,7 @@ import javafx.scene.input.KeyEvent;
 import model.Game;
 import model.unit.Unit;
 import util.Point;
+import view.InfoItem;
 
 import java.util.HashMap;
 
@@ -15,6 +16,8 @@ public class NoUnitSelectedState implements StateInterface {
 
     private RenderSystem renderSystem = new RenderSystem();
     private PhysicsSystem physicsSystem = new PhysicsSystem();
+
+    private InfoItem infoItem = new InfoItem();
 
     private Game game;
 
@@ -67,6 +70,12 @@ public class NoUnitSelectedState implements StateInterface {
             }
         }
 
+        for (Unit unit : game.getUnits()) {
+            if (unit.getPhysicsComponent().getPoint().equals(game.getCursor().getSelectionPoint())) {
+                infoItem.draw(gc, w, h, unit.getInfo());
+                break;
+            }
+        }
         Point selectionPoint = game.getCursor().getSelectionPoint();
         renderSystem.draw(game.getCursor().getRenderComponent(), gc, selectionPoint);
     }
