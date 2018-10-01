@@ -12,6 +12,7 @@ import model.map.Map;
 import model.unit.Unit;
 import util.Point;
 import view.ActionInfoItem;
+import view.InfoItem;
 
 import java.util.ArrayList;
 
@@ -22,6 +23,7 @@ public class SquareSelectedState implements StateInterface {
     private CombatSystem combatSystem = new CombatSystem();
 
     private ActionInfoItem actionInfoItem = new ActionInfoItem();
+    private InfoItem infoItem = new InfoItem();
 
     private Game game;
 
@@ -93,6 +95,9 @@ public class SquareSelectedState implements StateInterface {
 
         Point selectionPoint = game.getCursor().getSelectionPoint();
         renderSystem.draw(game.getCursor().getRenderComponent(), gc, selectionPoint);
+
+        infoItem.draw(gc, w, h, game.getSelectedUnit().getInfo());
+
         actionInfoItem.draw(
                 gc,
                 new Point(selectionPoint.getX() + 1 + selectedUnit.getCombatComponent().getWeapon().getMaxRange(), selectionPoint.getY()),

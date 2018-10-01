@@ -9,6 +9,7 @@ import model.Game;
 import model.cursor.SelectionIndicator;
 import model.unit.Unit;
 import util.Point;
+import view.InfoItem;
 
 import java.util.ArrayList;
 
@@ -17,6 +18,7 @@ public class UnitSelectedState implements StateInterface {
     private PhysicsSystem physicsSystem = new PhysicsSystem();
 
     private SelectionIndicator selectionIndicator = new SelectionIndicator();
+    private InfoItem infoItem = new InfoItem();
 
     private Game game;
 
@@ -74,6 +76,8 @@ public class UnitSelectedState implements StateInterface {
                 );
             }
         }
+
+        infoItem.draw(gc, w, h, game.getSelectedUnit().getInfo());
 
         Point selectionPoint = game.getCursor().getSelectionPoint();
         renderSystem.draw(game.getCursor().getRenderComponent(), gc, selectionPoint);
