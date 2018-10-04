@@ -31,6 +31,10 @@ public class Point {
         return point.getX().equals(x) && point.getY().equals(y);
     }
 
+    public int getDistance(Point other){
+        return Math.abs(other.getX() - x) + Math.abs(other.getY() - y);
+    }
+
     public ArrayList<Point> getNeighbors() {
         ArrayList<Point> neighbors = new ArrayList<>();
         Point leftNeighbor = new Point(x - 1, y);

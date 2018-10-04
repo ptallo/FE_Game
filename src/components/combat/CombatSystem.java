@@ -1,9 +1,12 @@
 package components.combat;
 
+import com.sun.deploy.util.ArrayUtil;
+import com.sun.tools.javac.util.ArrayUtils;
 import model.unit.Unit;
 import util.Point;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
@@ -68,35 +71,51 @@ public class CombatSystem {
     }
 
     public void completeCombat(Unit attacker, Unit defender, ArrayList<Unit> units) {
-        fight(attacker.getCombatComponent(), defender.getCombatComponent());
+        fight(attacker, defender);
         checkDeath(defender, units);
         checkDeath(attacker, units);
     }
 
     private void checkDeath(Unit unit, ArrayList<Unit> units) {
-        if (unit.getCombatComponent().isDead()){
+        if (unit.getCombatComponent().isDead()) {
             units.remove(unit);
         }
     }
 
-    private void fight(CombatComponent attacker, CombatComponent defender) {
-        //return -1 if attacker died, 0 if neither died and 1 if defender died
-        takeDamage(defender, attacker);
+    private void fight(Unit attacker, Unit defender) {
+        CombatComponent attackerComponent = defender.getCombatComponent();
+        CombatComponent defenderComponent = attacker.getCombatComponent();
+        takeDamage(attackerComponent, defenderComponent);
 
-        if (defender.isDead()) {
+        if (attackerComponent.isDead()) {
             return;
         }
 
-        takeDamage(attacker, defender);
+        if (Arrays.asList(attackerComponent.getWeapon().getRanges()).contains(attacker.getPhysicsComponent().getPoint().getDistance(defender.getPhysicsComponent().getPoint()))) {
+            takeDamage(defenderComponent, attackerComponent);
+        }
+
+        if (defenderComponent.getSpeed() > attackerComponent.getSpeed() + 5) {
+            takeDamage(attackerComponent, defenderComponent);
+        }
     }
 
-    private void takeDamage(CombatComponent defender, CombatComponent attacker){
+    private void takeDamage(CombatComponent defender, CombatComponent attacker) {
         if (attacker.getWeapon() != null) {
-            int newHealth = defender.getCurrentHealth() - attacker.getWeapon().getDamage();
+            int totalIncomingDamage = getTotalIncomingDamage(defender, attacker);
+            int newHealth = defender.getCurrentHealth() - (totalIncomingDamage > 0 ? totalIncomingDamage : 0);
             if (newHealth <= 0) {
                 newHealth = 0;
             }
             defender.setCurrentHealth(newHealth);
+        }
+    }
+
+    private int getTotalIncomingDamage(CombatComponent defender, CombatComponent attacker) {
+        if (attacker.getWeapon().getDamageType() == DamageType.PHYSICAL) {
+            return attacker.getWeapon().getDamage() + Math.floorDiv(attacker.getStrength(), 4) - Math.floorDiv(defender.getDefense(), 4);
+        } else {
+            return attacker.getWeapon().getDamage() + Math.floorDiv(attacker.getMagic(), 4) - Math.floorDiv(defender.getResistance(), 4);
         }
     }
 }
