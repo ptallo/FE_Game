@@ -11,6 +11,7 @@ import model.Game;
 import model.map.Map;
 import model.unit.Unit;
 import util.Point;
+import view.CombatInfoItem;
 
 import java.util.ArrayList;
 
@@ -20,6 +21,7 @@ public class FightSelectionState implements StateInterface{
     private RenderSystem renderSystem = new RenderSystem();
     private CombatSystem combatSystem = new CombatSystem();
 
+    private CombatInfoItem combatInfoItem = new CombatInfoItem();
     private Game game;
 
     public FightSelectionState(Game game) {
@@ -89,6 +91,8 @@ public class FightSelectionState implements StateInterface{
         }
 
         renderSystem.draw(game.getCursor().getRenderComponent(), gc, game.getEnemySelectedUnit().getPhysicsComponent().getPoint());
+
+        combatInfoItem.draw(gc, w, h, game.getSelectedUnit(), game.getEnemySelectedUnit());
     }
 
     private void moveSelectedEnemyUp() {
