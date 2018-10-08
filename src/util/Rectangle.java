@@ -1,5 +1,7 @@
 package util;
 
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,5 +33,15 @@ public class Rectangle {
                 x + width > rectangle.getX() &&
                 y < rectangle.getY() + rectangle.getHeight() &&
                 y + height > rectangle.getY();
+    }
+
+    public void draw(GraphicsContext gc, Color color, boolean strokeRect) {
+        if (strokeRect) {
+            gc.setStroke(color);
+            gc.strokeRect(x, y, width, height);
+        } else {
+            gc.setFill(color);
+            gc.fillRect(x, y, width, height);
+        }
     }
 }

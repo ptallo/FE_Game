@@ -95,7 +95,9 @@ public class CombatSystem {
             takeDamage(defenderComponent, attackerComponent);
         }
 
-        if (defenderComponent.getSpeed() > attackerComponent.getSpeed() + 5) {
+        if (defenderComponent.getSpeed() + 5 < attackerComponent.getSpeed()) {
+            takeDamage(defenderComponent, attackerComponent);
+        } else if (defenderComponent.getSpeed() > attackerComponent.getSpeed() + 5 ) {
             takeDamage(attackerComponent, defenderComponent);
         }
     }
@@ -111,7 +113,7 @@ public class CombatSystem {
         }
     }
 
-    private int getTotalIncomingDamage(CombatComponent defender, CombatComponent attacker) {
+    public int getTotalIncomingDamage(CombatComponent defender, CombatComponent attacker) {
         if (attacker.getWeapon().getDamageType() == DamageType.PHYSICAL) {
             return attacker.getWeapon().getDamage() + Math.floorDiv(attacker.getStrength(), 4) - Math.floorDiv(defender.getDefense(), 4);
         } else {
