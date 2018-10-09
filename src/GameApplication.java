@@ -10,14 +10,13 @@ public class GameApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setFullScreen(true);
+        primaryStage.setResizable(false);
         primaryStage.setTitle("FE model.Game");
 
         Group root = new Group();
-        Scene scene = new Scene(root, primaryStage.getWidth(), primaryStage.getHeight(), Color.LIGHTGRAY);
+        Scene scene = new Scene(root, 608, 400, Color.LIGHTGRAY);
         primaryStage.setScene(scene);
 
-        primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         primaryStage.show();
 
         GameController controller = new GameController(primaryStage);

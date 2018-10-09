@@ -92,12 +92,13 @@ public class CombatSystem {
         int distance = attacker.getPhysicsComponent().getPoint().getDistance(defender.getPhysicsComponent().getPoint());
         if (ArrayUtils.contains(defender.getCombatComponent().getWeapon().getRanges(), distance)) {
             takeDamage(defenderComponent, attackerComponent);
+            if (defenderComponent.getSpeed() >= attackerComponent.getSpeed() + 5 ) {
+                takeDamage(defenderComponent, attackerComponent);
+            }
         }
 
         if (attackerComponent.getSpeed() >= defenderComponent.getSpeed() + 5 ) {
             takeDamage(attackerComponent, defenderComponent);
-        } else if (defenderComponent.getSpeed() >= attackerComponent.getSpeed() + 5 ) {
-            takeDamage(defenderComponent, attackerComponent);
         }
     }
 
