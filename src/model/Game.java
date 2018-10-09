@@ -30,6 +30,7 @@ public class Game {
     private Player currentPlayer;
     private Unit enemySelectedUnit;
 
+    private DialogState dialogState = new DialogState(new ArrayList<>(), this, null);
     private NoUnitSelectedState noUnitSelectedState = new NoUnitSelectedState(this);
     private UnitSelectedState unitSelectedState = new UnitSelectedState(this);
     private SquareSelectedState squareSelectedState = new SquareSelectedState(this);
@@ -38,20 +39,16 @@ public class Game {
     private StateInterface currentState;
 
     public Game() {
-        currentState = noUnitSelectedState;
+        currentState = dialogState;
+        dialogState.setFollowingState(noUnitSelectedState);
 
         players = new ArrayList<>();
         players.add(new Player());
         players.add(new Player());
 
         units = new ArrayList<>();
-        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(0), 0,7, 7));
-        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(0), 0,5, 5));
-        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(0), 0,6, 5));
-        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(0), 0,7, 5));
-        units.add(UnitEnum.ARCHER.getUnitInstance(players.get(0), 0,8, 5));
-        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 1, 6));
-        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 0, 5));
+        units.add(UnitEnum.ARCHER.getUnitInstance(players.get(0), 0,4, 5));
+        units.add(UnitEnum.ARCHER.getUnitInstance(players.get(0), 0,4, 4));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 1, 4));
 
         currentPlayerUnitsLeft = new ArrayList<>();
@@ -81,6 +78,19 @@ public class Game {
 
     public void checkChangeTurn() {
         // this checks to see if the turn is over and if it is it switches the players turns
+        for (Player player : players) {
+            int count = 0;
+            for (Unit unit : units) {
+                if (unit.getOwner() == player) {
+                    count++;
+                }
+            }
+            if (count == 0) {
+                currentState = new GameOverState(true);
+                return;
+            }
+        }
+
         if (currentPlayerUnitsLeft.size() == 0) {
             int index = players.indexOf(currentPlayer);
             if (index < players.size() - 1) {

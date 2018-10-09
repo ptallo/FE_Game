@@ -10,8 +10,6 @@ import model.unit.Unit;
 import util.Point;
 import view.InfoItem;
 
-import java.util.HashMap;
-
 public class NoUnitSelectedState implements StateInterface {
 
     private RenderSystem renderSystem = new RenderSystem();

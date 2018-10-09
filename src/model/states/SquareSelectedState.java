@@ -50,13 +50,13 @@ public class SquareSelectedState implements StateInterface {
                 game.getCurrentPlayerUnitsLeft().remove(game.getSelectedUnit());
                 game.setSelectedUnit(null);
                 game.setCurrentState(game.getNoUnitSelectedState());
+                game.checkChangeTurn();
             }
         } else if (event.getCode() == KeyCode.ESCAPE) {
             // Move the Unit back to its previous position
             game.getSelectedUnit().getPhysicsComponent().revertPosition();
             game.setCurrentState(game.getUnitSelectedState());
         }
-        game.checkChangeTurn();
     }
 
     @Override
