@@ -8,6 +8,7 @@ import javafx.scene.input.KeyEvent;
 import model.Game;
 import model.unit.Unit;
 import util.Point;
+import view.InfoItem;
 
 import java.util.HashMap;
 
@@ -15,6 +16,8 @@ public class NoUnitSelectedState implements StateInterface {
 
     private RenderSystem renderSystem = new RenderSystem();
     private PhysicsSystem physicsSystem = new PhysicsSystem();
+
+    private InfoItem infoItem = new InfoItem();
 
     private Game game;
 
@@ -38,11 +41,19 @@ public class NoUnitSelectedState implements StateInterface {
             game.handleCursorMoved();
         } else if (event.getCode() == KeyCode.ENTER) {
             game.setSelectedUnit(game.getHoveredUnit());
+            if (game.getSelectedUnit() != null) {
+                game.setCurrentState(game.getUnitSelectedState());
+            }
         }
     }
 
     @Override
     public void draw(GraphicsContext gc, double w, double h) {
+        game.getCursor().handleTransform(gc, w, h);
+        gc.clearRect(-gc.getTransform().getTx(), -gc.getTransform().getTy(), w, h);
+
+        game.getMap().draw(gc);
+
         for (Unit unit : game.getUnits()) {
             if (unit.getRenderComponent() != null) {
                 boolean drawGrey = false;
@@ -59,18 +70,13 @@ public class NoUnitSelectedState implements StateInterface {
             }
         }
 
-        Point selectionPoint = game.getCursor().getSelectionPoint();
-        renderSystem.draw(game.getCursor().getRenderComponent(), gc, selectionPoint);
-
         for (Unit unit : game.getUnits()) {
-            if (unit.getPhysicsComponent().getPoint().equals(selectionPoint)) {
-                game.getUnitInfoItem().showInfo(new Point(1, 10), gc, unit.getInfo());
+            if (unit.getPhysicsComponent().getPoint().equals(game.getCursor().getSelectionPoint())) {
+                infoItem.draw(gc, w, h, unit.getInfo());
                 break;
             }
         }
-
-        HashMap<String, String> playerMap = new HashMap<>();
-        playerMap.put("Player", String.valueOf(game.getPlayers().indexOf(game.getCurrentPlayer()) + 1));
-        game.getPlayerTurnInfoItem().showInfo(w * 0.02, w * 0.02, gc, playerMap);
+        Point selectionPoint = game.getCursor().getSelectionPoint();
+        renderSystem.draw(game.getCursor().getRenderComponent(), gc, selectionPoint);
     }
 }

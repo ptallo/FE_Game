@@ -11,6 +11,7 @@ import model.Game;
 import model.map.Map;
 import model.unit.Unit;
 import util.Point;
+import view.CombatInfoItem;
 
 import java.util.ArrayList;
 
@@ -20,6 +21,7 @@ public class FightSelectionState implements StateInterface{
     private RenderSystem renderSystem = new RenderSystem();
     private CombatSystem combatSystem = new CombatSystem();
 
+    private CombatInfoItem combatInfoItem = new CombatInfoItem();
     private Game game;
 
     public FightSelectionState(Game game) {
@@ -44,17 +46,23 @@ public class FightSelectionState implements StateInterface{
             game.getCurrentPlayerUnitsLeft().remove(game.getSelectedUnit());
             game.setEnemySelectedUnit(null);
             game.setSelectedUnit(null);
+            game.setCurrentState(game.getNoUnitSelectedState());
         } else if (event.getCode() == KeyCode.ESCAPE) {
             // Go back to the Square Selected State
             game.setEnemySelectedUnit(null);
             game.getCursor().setPoint(game.getSelectedUnit().getPhysicsComponent().getPoint(), game.getMap());
-            game.getActionInfoItem().setDrawItem(true);
+            game.setCurrentState(game.getSquareSelectedState());
         }
         game.checkChangeTurn();
     }
 
     @Override
     public void draw(GraphicsContext gc, double w, double h) {
+        game.getCursor().handleTransform(gc, w, h);
+        gc.clearRect(-gc.getTransform().getTx(), -gc.getTransform().getTy(), w, h);
+
+        game.getMap().draw(gc);
+
         Unit selectedUnit = game.getSelectedUnit();
         for (Point point : combatSystem.getAttackablePoints(selectedUnit.getCombatComponent(), selectedUnit.getPhysicsComponent().getPoint())) {
             gc.setFill(Color.rgb(255, 0, 0, 0.2));
@@ -83,6 +91,8 @@ public class FightSelectionState implements StateInterface{
         }
 
         renderSystem.draw(game.getCursor().getRenderComponent(), gc, game.getEnemySelectedUnit().getPhysicsComponent().getPoint());
+
+        combatInfoItem.draw(gc, w, h, game.getSelectedUnit(), game.getEnemySelectedUnit());
     }
 
     private void moveSelectedEnemyUp() {

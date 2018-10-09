@@ -7,18 +7,29 @@ import lombok.Setter;
 @Setter
 public class CombatComponent {
 
-    private int healthCap;
+    private int health;
     private int currentHealth;
+
+    private int strength;
+    private int defense;
+    private int magic;
+    private int resistance;
+    private int speed;
+
     private Weapon weapon;
 
-    public CombatComponent(int healthCap, Weapon weapon) {
-        if (healthCap < 1) {
-            this.healthCap = 1;
+    public CombatComponent(int health, int strength, int defense, int magic, int resistance, int speed) {
+        if (health < 1) {
+            this.health = 1;
         } else {
-            this.healthCap = healthCap;
+            this.health = health;
         }
-        this.currentHealth = healthCap;
-        this.weapon = weapon;
+        this.currentHealth = health;
+        this.strength = strength;
+        this.defense = defense;
+        this.magic = magic;
+        this.resistance = resistance;
+        this.speed = speed;
     }
 
     boolean isAlive() {

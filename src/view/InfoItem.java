@@ -4,76 +4,88 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import model.cursor.Cursor;
+import model.map.Map;
 import util.Point;
 import util.Rectangle;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 public class InfoItem {
 
-    private final int fontSize = 14;
-    private final int textBuffer = 6;
-    private final Font font = new Font("Monospaced", fontSize);
+    private double yMargin = 0.3;
+    private double xMargin = 0.1;
+    private Font font = new Font("Monospaced", 14);
 
-    public double showInfo(Point point, GraphicsContext gc, HashMap<String, String> infoMap) {
-        return showInfo(point.getRealX(), point.getRealY(), gc, infoMap);
-    }
+    public void draw(GraphicsContext gc, double w, double h, HashMap<String, String> info) {
+        ArrayList<String> items = getUniformList(info);
+        double width = Collections.max(items.stream().map(this::getWidth).collect(Collectors.toList()));
+        double marginWidth = width * xMargin;
+        double height = font.getSize() * items.size();
+        double marginHeight = height * yMargin;
 
-    public double showInfo(double x, double y, GraphicsContext gc, HashMap<String, String> infoMap) {
-        Rectangle infoRect = getInfoRectangle(x, y, infoMap);
-        double xMargin = infoRect.getWidth() * 0.1;
+        double distanceFromEdge = Map.Tile_Height;
 
-        gc.setFill(Color.LIGHTGRAY);
-        gc.fillRect(infoRect.getX(), infoRect.getY(), infoRect.getWidth(), infoRect.getHeight());
+        double xDrawPosition = distanceFromEdge - gc.getTransform().getTx();
+        double yDrawPosition = h - distanceFromEdge - height - (marginHeight * 2) - gc.getTransform().getTy();
 
-        gc.setLineWidth(3);
-        gc.setStroke(Color.GRAY);
-        gc.strokeRect(infoRect.getX(), infoRect.getY(), infoRect.getWidth(), infoRect.getHeight());
+        gc.setFill(Color.BEIGE);
+        gc.fillRect(
+                xDrawPosition,
+                yDrawPosition,
+                width + (marginWidth * 2),
+                height + (marginHeight * 2)
+        );
 
-        gc.setFill(new Color(0, 0, 0, 1));
-        gc.setFont(font);
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(2);
+        gc.strokeRect(
+                xDrawPosition,
+                yDrawPosition,
+                width + (marginWidth * 2),
+                height + (marginHeight * 2)
+        );
 
-
-        Set<String> keys = infoMap.keySet();
-        int i = 0;
-        for (String key : keys) {
-            String infoText = key + ": " + infoMap.get(key);
-            gc.fillText(infoText, infoRect.getX() + xMargin, infoRect.getY() + ((i + 1) * (fontSize + textBuffer)), infoRect.getWidth() - (xMargin * 2));
-            i++;
+        for (int i = 0; i < items.size(); i++) {
+            gc.setFill(Color.BLACK);
+            gc.setFont(font);
+            gc.fillText(items.get(i), xDrawPosition + marginWidth, yDrawPosition + font.getSize() * (i + 1) + marginHeight);
         }
-
-        return infoRect.getHeight();
     }
 
-    private Rectangle getInfoRectangle(double x, double y, HashMap<String, String> infoMap) {
-        return new Rectangle(x, y, determineWidth(infoMap), determineHeight(infoMap));
-    }
-
-    private double determineHeight(HashMap<String, String> infoMap) {
-        return (fontSize * infoMap.size()) + (textBuffer * (infoMap.size() + 1));
-    }
-
-    private double determineWidth(HashMap<String, String> infoMap) {
-        ArrayList<String> strings = new ArrayList<>();
-
-        Set<String> keys = infoMap.keySet();
-        for (String key : keys) {
-            strings.add(key + ": " + infoMap.get(key));
-        }
-
+    private ArrayList<String> getUniformList(HashMap<String, String> info) {
         double maxWidth = 0;
-        for (String str : strings){
-            Text text = new Text(str);
-            text.setFont(font);
-            double width = text.getLayoutBounds().getWidth();
-            if (width > maxWidth){
+        for (String keyString : info.keySet()) {
+            String fullString = keyString.concat(":").concat(info.get(keyString));
+            double width = getWidth(fullString);
+            if (width > maxWidth) {
                 maxWidth = width;
             }
         }
+        final double width = maxWidth;
+        return info.keySet().stream().map(key -> getString(info, key, width)).collect(Collectors.toCollection(ArrayList::new));
+    }
 
-        return maxWidth;
+    private String getString(HashMap<String, String> info, String key, double width) {
+        String tempString = key.concat(": ").concat(info.get(key));
+        while (getWidth(tempString) < width) {
+            tempString = tempString.substring(0, key.length() + 1) +
+                    " " +
+                    tempString.substring(key.length() + 1);
+        }
+        return tempString;
+    }
+
+    private double getWidth(String string) {
+        Text text = new Text(string);
+        text.setFont(font);
+        return text.getLayoutBounds().getWidth();
+    }
+
+    private double getHeight(Collection<? extends String> strings) {
+        return font.getSize() * strings.size();
     }
 }

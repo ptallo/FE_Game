@@ -7,11 +7,13 @@ import lombok.Setter;
 @Setter
 public class Weapon {
 
+    private DamageType damageType;
     private int damage;
     private int[] ranges;
 
-    public Weapon(int damage, int... range) {
+    public Weapon(int damage, DamageType damageType, int... range) {
         this.damage = damage;
+        this.damageType = damageType;
         this.ranges = range;
     }
 

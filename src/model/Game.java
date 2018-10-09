@@ -8,14 +8,10 @@ import lombok.Setter;
 import model.cursor.Cursor;
 import model.cursor.SelectionIndicator;
 import model.map.Map;
-import model.states.FightSelectionState;
-import model.states.NoUnitSelectedState;
-import model.states.SquareSelectedState;
-import model.states.UnitSelectedState;
+import model.states.*;
 import model.unit.Unit;
 import model.unit.UnitEnum;
 import view.ActionInfoItem;
-import view.InfoItem;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -25,10 +21,6 @@ import java.util.stream.Collectors;
 public class Game {
     private Map map = new Map();
     private Cursor cursor = new Cursor();
-    private SelectionIndicator selectionIndicator = new SelectionIndicator();
-    private InfoItem playerTurnInfoItem = new InfoItem();
-    private InfoItem unitInfoItem = new InfoItem();
-    private ActionInfoItem actionInfoItem = new ActionInfoItem();
 
     private ArrayList<Unit> units;
     private ArrayList<Unit> currentPlayerUnitsLeft;
@@ -38,12 +30,16 @@ public class Game {
     private Player currentPlayer;
     private Unit enemySelectedUnit;
 
-    private UnitSelectedState unitSelectedState = new UnitSelectedState(this);
     private NoUnitSelectedState noUnitSelectedState = new NoUnitSelectedState(this);
+    private UnitSelectedState unitSelectedState = new UnitSelectedState(this);
     private SquareSelectedState squareSelectedState = new SquareSelectedState(this);
     private FightSelectionState fightSelectionState = new FightSelectionState(this);
 
+    private StateInterface currentState;
+
     public Game() {
+        currentState = noUnitSelectedState;
+
         players = new ArrayList<>();
         players.add(new Player());
         players.add(new Player());
@@ -53,7 +49,7 @@ public class Game {
         units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(0), 0,5, 5));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(0), 0,6, 5));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(0), 0,7, 5));
-        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(0), 0,8, 5));
+        units.add(UnitEnum.ARCHER.getUnitInstance(players.get(0), 0,8, 5));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 1, 6));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 0, 5));
         units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 1, 4));
@@ -65,35 +61,15 @@ public class Game {
 
     public void handleEvent(KeyEvent event) {
         // States : No Unit Selected, Unit Selected, Square Selected, Action Selected
-        if (enemySelectedUnit != null) {
-            fightSelectionState.handleKeyEvent(event);
-        } else if (selectedUnit == null) {
-            noUnitSelectedState.handleKeyEvent(event);
-        } else if (actionInfoItem.getDrawItem()) {
-            squareSelectedState.handleKeyEvent(event);
-        } else {
-            unitSelectedState.handleKeyEvent(event);
-        }
+        currentState.handleKeyEvent(event);
     }
 
     public void draw(GraphicsContext gc, double w, double h) {
-        cursor.handleTransform(gc, w, h);
-        gc.clearRect(-gc.getTransform().getTx(), -gc.getTransform().getTy(), w, h);
-
-        map.draw(gc);
-
-        if (enemySelectedUnit != null) {
-            fightSelectionState.draw(gc, w, h);
-        } else if (selectedUnit == null) {
-            noUnitSelectedState.draw(gc, w, h);
-        } else if (actionInfoItem.getDrawItem()) {
-            squareSelectedState.draw(gc, w, h);
-        } else {
-            unitSelectedState.draw(gc, w, h);
-        }
+        currentState.draw(gc, w, h);
     }
 
     public void handleCursorMoved() {
+        // whenever the cursor on the map is moved we handle populating the hovered unit object
         Unit hoveredUnit = null;
         for (Unit unit : currentPlayerUnitsLeft) {
             if (cursor.getSelectionPoint().equals(unit.getPhysicsComponent().getPoint())) {
@@ -104,6 +80,7 @@ public class Game {
     }
 
     public void checkChangeTurn() {
+        // this checks to see if the turn is over and if it is it switches the players turns
         if (currentPlayerUnitsLeft.size() == 0) {
             int index = players.indexOf(currentPlayer);
             if (index < players.size() - 1) {
