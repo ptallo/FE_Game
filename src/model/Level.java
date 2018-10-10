@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-public class Game {
+public class Level {
     private Cursor cursor = new Cursor();
     private Map map;
 
@@ -32,7 +32,7 @@ public class Game {
     private Player currentPlayer;
     private Unit enemySelectedUnit;
 
-    private DialogState dialogState = new DialogState(new ArrayList<>(), this, null);
+    private DialogState dialogState;
     private NoUnitSelectedState noUnitSelectedState = new NoUnitSelectedState(this);
     private UnitSelectedState unitSelectedState = new UnitSelectedState(this);
     private SquareSelectedState squareSelectedState = new SquareSelectedState(this);
@@ -40,9 +40,8 @@ public class Game {
 
     private StateInterface currentState;
 
-    public Game() {
-        currentState = dialogState;
-        dialogState.setFollowingState(noUnitSelectedState);
+    public Level(int levelNumber) {
+
 
         players = new ArrayList<>();
         players.add(new Player());
@@ -51,10 +50,13 @@ public class Game {
         try {
             loadMap(1);
             loadUnits(1);
+            loadDialog(1);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        currentState = dialogState;
+        dialogState.setFollowingState(noUnitSelectedState);
         currentPlayerUnitsLeft = new ArrayList<>();
         currentPlayer = players.get(players.size() - 1);
         checkChangeTurn();
@@ -151,5 +153,15 @@ public class Game {
         }
 
         map = new Map(lines);
+    }
+
+    private void loadDialog(int levelNumber) throws FileNotFoundException {
+        String path = String.format("resources/levels/level%d/dialog.txt", levelNumber);
+        Scanner scanner = new Scanner(new File(path));
+        ArrayList<String> lines = new ArrayList<>();
+        while (scanner.hasNextLine()) {
+            lines.add(scanner.nextLine());
+        }
+        dialogState = new DialogState(lines, this, null);
     }
 }

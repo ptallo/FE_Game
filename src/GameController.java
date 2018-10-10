@@ -1,22 +1,22 @@
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-import model.Game;
+import model.Level;
 
 
 public class GameController {
 
-    private Game game;
+    private Level level;
 
     public GameController(Stage primaryStage) {
-        game = new Game();
+        level = new Level(1);
         primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, this::handleKeyEvent);
     }
 
     private void handleKeyEvent(KeyEvent event){
-        game.handleEvent(event);
+        level.handleEvent(event);
     }
 
-    public Game getGame() {
-        return game;
+    public Level getLevel() {
+        return level;
     }
 }

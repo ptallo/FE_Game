@@ -7,7 +7,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import lombok.Getter;
-import model.Game;
+import model.Level;
 import model.map.Map;
 import model.unit.Unit;
 import util.Point;
@@ -25,10 +25,10 @@ public class SquareSelectedState implements StateInterface {
     private ActionInfoItem actionInfoItem = new ActionInfoItem();
     private InfoItem infoItem = new InfoItem();
 
-    private Game game;
+    private Level level;
 
-    public SquareSelectedState(Game game) {
-        this.game = game;
+    public SquareSelectedState(Level level) {
+        this.level = level;
     }
 
     @Override
@@ -38,35 +38,35 @@ public class SquareSelectedState implements StateInterface {
         } else if (event.getCode() == KeyCode.DOWN) {
             actionInfoItem.changeOption(1);
         } else if (event.getCode() == KeyCode.ENTER) {
-            ArrayList<String> options = game.getOptions(game.getSelectedUnit());
+            ArrayList<String> options = level.getOptions(level.getSelectedUnit());
             String selectedOption = options.get(actionInfoItem.getOptionIndex());
             if (selectedOption.equalsIgnoreCase("Fight")) {
                 // Go to combat state
-                Unit enemySelectedUnit = combatSystem.getAttackableUnits(game.getUnits(), game.getSelectedUnit()).get(0);
-                game.setEnemySelectedUnit(enemySelectedUnit);
-                game.getCursor().setPoint(enemySelectedUnit.getPhysicsComponent().getPoint(), game.getMap());
-                game.setCurrentState(game.getFightSelectionState());
+                Unit enemySelectedUnit = combatSystem.getAttackableUnits(level.getUnits(), level.getSelectedUnit()).get(0);
+                level.setEnemySelectedUnit(enemySelectedUnit);
+                level.getCursor().setPoint(enemySelectedUnit.getPhysicsComponent().getPoint(), level.getMap());
+                level.setCurrentState(level.getFightSelectionState());
             } else {
-                game.getCurrentPlayerUnitsLeft().remove(game.getSelectedUnit());
-                game.setSelectedUnit(null);
-                game.setCurrentState(game.getNoUnitSelectedState());
-                game.checkChangeTurn();
+                level.getCurrentPlayerUnitsLeft().remove(level.getSelectedUnit());
+                level.setSelectedUnit(null);
+                level.setCurrentState(level.getNoUnitSelectedState());
+                level.checkChangeTurn();
             }
         } else if (event.getCode() == KeyCode.ESCAPE) {
             // Move the Unit back to its previous position
-            game.getSelectedUnit().getPhysicsComponent().revertPosition();
-            game.setCurrentState(game.getUnitSelectedState());
+            level.getSelectedUnit().getPhysicsComponent().revertPosition();
+            level.setCurrentState(level.getUnitSelectedState());
         }
     }
 
     @Override
     public void draw(GraphicsContext gc, double w, double h) {
-        game.getCursor().handleTransform(gc, w, h);
+        level.getCursor().handleTransform(gc, w, h);
         gc.clearRect(-gc.getTransform().getTx(), -gc.getTransform().getTy(), w, h);
 
-        game.getMap().draw(gc);
+        level.getMap().draw(gc);
 
-        Unit selectedUnit = game.getSelectedUnit();
+        Unit selectedUnit = level.getSelectedUnit();
         for (Point point : combatSystem.getAttackablePoints(selectedUnit.getCombatComponent(), selectedUnit.getPhysicsComponent().getPoint())) {
             gc.setFill(Color.rgb(255, 0, 0, 0.2));
             gc.fillRect(
@@ -77,10 +77,10 @@ public class SquareSelectedState implements StateInterface {
             );
         }
 
-        for (Unit unit : game.getUnits()) {
+        for (Unit unit : level.getUnits()) {
             if (unit.getRenderComponent() != null) {
                 boolean drawGrey = false;
-                if (game.getCurrentPlayer() == unit.getOwner() && game.getCurrentPlayerUnitsLeft().indexOf(unit) == -1) {
+                if (level.getCurrentPlayer() == unit.getOwner() && level.getCurrentPlayerUnitsLeft().indexOf(unit) == -1) {
                     drawGrey = true;
                 }
 
@@ -93,15 +93,15 @@ public class SquareSelectedState implements StateInterface {
             }
         }
 
-        Point selectionPoint = game.getCursor().getSelectionPoint();
-        renderSystem.draw(game.getCursor().getRenderComponent(), gc, selectionPoint);
+        Point selectionPoint = level.getCursor().getSelectionPoint();
+        renderSystem.draw(level.getCursor().getRenderComponent(), gc, selectionPoint);
 
-        infoItem.draw(gc, w, h, game.getSelectedUnit().getInfo());
+        infoItem.draw(gc, w, h, level.getSelectedUnit().getInfo());
 
         actionInfoItem.draw(
                 gc,
                 new Point(selectionPoint.getX() + 1 + selectedUnit.getCombatComponent().getWeapon().getMaxRange(), selectionPoint.getY()),
-                game.getOptions(selectedUnit)
+                level.getOptions(selectedUnit)
         );
     }
 }

@@ -5,7 +5,7 @@ import components.render.RenderSystem;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import model.Game;
+import model.Level;
 import model.cursor.SelectionIndicator;
 import model.unit.Unit;
 import util.Point;
@@ -20,51 +20,51 @@ public class UnitSelectedState implements StateInterface {
     private SelectionIndicator selectionIndicator = new SelectionIndicator();
     private InfoItem infoItem = new InfoItem();
 
-    private Game game;
+    private Level level;
 
-    public UnitSelectedState(Game game) {
-        this.game = game;
+    public UnitSelectedState(Level level) {
+        this.level = level;
     }
 
     @Override
     public void handleKeyEvent(KeyEvent event) {
         if (event.getCode() == KeyCode.UP) {
-            game.getCursor().movePoint(0, -1, game.getMap());
-            game.handleCursorMoved();
+            level.getCursor().movePoint(0, -1, level.getMap());
+            level.handleCursorMoved();
         } else if (event.getCode() == KeyCode.DOWN) {
-            game.getCursor().movePoint(0, 1, game.getMap());
-            game.handleCursorMoved();
+            level.getCursor().movePoint(0, 1, level.getMap());
+            level.handleCursorMoved();
         } else if (event.getCode() == KeyCode.LEFT) {
-            game.getCursor().movePoint(-1, 0, game.getMap());
-            game.handleCursorMoved();
+            level.getCursor().movePoint(-1, 0, level.getMap());
+            level.handleCursorMoved();
         } else if (event.getCode() == KeyCode.RIGHT) {
-            game.getCursor().movePoint(1, 0, game.getMap());
-            game.handleCursorMoved();
+            level.getCursor().movePoint(1, 0, level.getMap());
+            level.handleCursorMoved();
         } else if (event.getCode() == KeyCode.ENTER) {
-            physicsSystem.setPoint(game.getSelectedUnit(), game.getCursor().getSelectionPoint(), game.getMap(), game.getUnits());
-            game.setCurrentState(game.getSquareSelectedState());
-            game.getSquareSelectedState().getActionInfoItem().setOptionIndex(0);
+            physicsSystem.setPoint(level.getSelectedUnit(), level.getCursor().getSelectionPoint(), level.getMap(), level.getUnits());
+            level.setCurrentState(level.getSquareSelectedState());
+            level.getSquareSelectedState().getActionInfoItem().setOptionIndex(0);
         } else if (event.getCode() == KeyCode.ESCAPE) {
-            game.setSelectedUnit(null);
-            game.setCurrentState(game.getNoUnitSelectedState());
+            level.setSelectedUnit(null);
+            level.setCurrentState(level.getNoUnitSelectedState());
         }
     }
 
     @Override
     public void draw(GraphicsContext gc, double w, double h) {
-        game.getCursor().handleTransform(gc, w, h);
+        level.getCursor().handleTransform(gc, w, h);
         gc.clearRect(-gc.getTransform().getTx(), -gc.getTransform().getTy(), w, h);
 
-        game.getMap().draw(gc);
+        level.getMap().draw(gc);
 
-        ArrayList<Unit> units = game.getUnits();
-        physicsSystem.drawMovableArea(game.getSelectedUnit(), gc, game.getMap(), game.getUnits());
-        renderSystem.draw(selectionIndicator.getRenderComponent(), gc, game.getSelectedUnit().getPhysicsComponent().getPoint());
+        ArrayList<Unit> units = level.getUnits();
+        physicsSystem.drawMovableArea(level.getSelectedUnit(), gc, level.getMap(), level.getUnits());
+        renderSystem.draw(selectionIndicator.getRenderComponent(), gc, level.getSelectedUnit().getPhysicsComponent().getPoint());
 
         for (Unit unit : units) {
             if (unit.getRenderComponent() != null) {
                 boolean drawGrey = false;
-                if (game.getCurrentPlayer() == unit.getOwner() && game.getCurrentPlayerUnitsLeft().indexOf(unit) == -1) {
+                if (level.getCurrentPlayer() == unit.getOwner() && level.getCurrentPlayerUnitsLeft().indexOf(unit) == -1) {
                     drawGrey = true;
                 }
 
@@ -77,9 +77,9 @@ public class UnitSelectedState implements StateInterface {
             }
         }
 
-        infoItem.draw(gc, w, h, game.getSelectedUnit().getInfo());
+        infoItem.draw(gc, w, h, level.getSelectedUnit().getInfo());
 
-        Point selectionPoint = game.getCursor().getSelectionPoint();
-        renderSystem.draw(game.getCursor().getRenderComponent(), gc, selectionPoint);
+        Point selectionPoint = level.getCursor().getSelectionPoint();
+        renderSystem.draw(level.getCursor().getRenderComponent(), gc, selectionPoint);
     }
 }

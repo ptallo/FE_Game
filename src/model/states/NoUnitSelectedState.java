@@ -5,7 +5,7 @@ import components.render.RenderSystem;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import model.Game;
+import model.Level;
 import model.unit.Unit;
 import util.Point;
 import view.InfoItem;
@@ -17,45 +17,45 @@ public class NoUnitSelectedState implements StateInterface {
 
     private InfoItem infoItem = new InfoItem();
 
-    private Game game;
+    private Level level;
 
-    public NoUnitSelectedState(Game game) {
-        this.game = game;
+    public NoUnitSelectedState(Level level) {
+        this.level = level;
     }
 
     @Override
     public void handleKeyEvent(KeyEvent event) {
         if (event.getCode() == KeyCode.UP) {
-            game.getCursor().movePoint(0, -1, game.getMap());
-            game.handleCursorMoved();
+            level.getCursor().movePoint(0, -1, level.getMap());
+            level.handleCursorMoved();
         } else if (event.getCode() == KeyCode.DOWN) {
-            game.getCursor().movePoint(0, 1, game.getMap());
-            game.handleCursorMoved();
+            level.getCursor().movePoint(0, 1, level.getMap());
+            level.handleCursorMoved();
         } else if (event.getCode() == KeyCode.LEFT) {
-            game.getCursor().movePoint(-1, 0, game.getMap());
-            game.handleCursorMoved();
+            level.getCursor().movePoint(-1, 0, level.getMap());
+            level.handleCursorMoved();
         } else if (event.getCode() == KeyCode.RIGHT) {
-            game.getCursor().movePoint(1, 0, game.getMap());
-            game.handleCursorMoved();
+            level.getCursor().movePoint(1, 0, level.getMap());
+            level.handleCursorMoved();
         } else if (event.getCode() == KeyCode.ENTER) {
-            game.setSelectedUnit(game.getHoveredUnit());
-            if (game.getSelectedUnit() != null) {
-                game.setCurrentState(game.getUnitSelectedState());
+            level.setSelectedUnit(level.getHoveredUnit());
+            if (level.getSelectedUnit() != null) {
+                level.setCurrentState(level.getUnitSelectedState());
             }
         }
     }
 
     @Override
     public void draw(GraphicsContext gc, double w, double h) {
-        game.getCursor().handleTransform(gc, w, h);
+        level.getCursor().handleTransform(gc, w, h);
         gc.clearRect(-gc.getTransform().getTx(), -gc.getTransform().getTy(), w, h);
 
-        game.getMap().draw(gc);
+        level.getMap().draw(gc);
 
-        for (Unit unit : game.getUnits()) {
+        for (Unit unit : level.getUnits()) {
             if (unit.getRenderComponent() != null) {
                 boolean drawGrey = false;
-                if (game.getCurrentPlayer() == unit.getOwner() && game.getCurrentPlayerUnitsLeft().indexOf(unit) == -1) {
+                if (level.getCurrentPlayer() == unit.getOwner() && level.getCurrentPlayerUnitsLeft().indexOf(unit) == -1) {
                     drawGrey = true;
                 }
 
@@ -68,13 +68,13 @@ public class NoUnitSelectedState implements StateInterface {
             }
         }
 
-        for (Unit unit : game.getUnits()) {
-            if (unit.getPhysicsComponent().getPoint().equals(game.getCursor().getSelectionPoint())) {
+        for (Unit unit : level.getUnits()) {
+            if (unit.getPhysicsComponent().getPoint().equals(level.getCursor().getSelectionPoint())) {
                 infoItem.draw(gc, w, h, unit.getInfo());
                 break;
             }
         }
-        Point selectionPoint = game.getCursor().getSelectionPoint();
-        renderSystem.draw(game.getCursor().getRenderComponent(), gc, selectionPoint);
+        Point selectionPoint = level.getCursor().getSelectionPoint();
+        renderSystem.draw(level.getCursor().getRenderComponent(), gc, selectionPoint);
     }
 }
