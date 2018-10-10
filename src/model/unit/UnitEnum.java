@@ -4,8 +4,8 @@ import components.combat.WeaponEnum;
 import model.Player;
 
 public enum UnitEnum {
-    SPEARMAN("spearman.png", WeaponEnum.SWORD, 4, 16, 8, 4, 4, 4, 0),
-    ARCHER("archer.png", WeaponEnum.BOW, 8, 12, 4, 0, 4, 4, 10);
+    SPEARMAN("units/spearman.png", WeaponEnum.SWORD, 4, 16, 8, 4, 4, 4, 0),
+    ARCHER("units/archer.png", WeaponEnum.BOW, 8, 12, 4, 0, 4, 4, 10);
 
     private String path;
     private WeaponEnum weaponEnum;
