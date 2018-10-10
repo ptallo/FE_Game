@@ -13,14 +13,16 @@ import model.unit.Unit;
 import model.unit.UnitEnum;
 import view.ActionInfoItem;
 
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 @Getter
 @Setter
 public class Game {
-    private Map map = new Map();
     private Cursor cursor = new Cursor();
+    private Map map;
 
     private ArrayList<Unit> units;
     private ArrayList<Unit> currentPlayerUnitsLeft;
@@ -46,10 +48,12 @@ public class Game {
         players.add(new Player());
         players.add(new Player());
 
-        units = new ArrayList<>();
-        units.add(UnitEnum.ARCHER.getUnitInstance(players.get(0), 0,4, 5));
-        units.add(UnitEnum.ARCHER.getUnitInstance(players.get(0), 0,4, 4));
-        units.add(UnitEnum.SPEARMAN.getUnitInstance(players.get(1), 1, 1, 4));
+        try {
+            loadMap(1);
+            loadUnits(1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         currentPlayerUnitsLeft = new ArrayList<>();
         currentPlayer = players.get(players.size() - 1);
@@ -116,5 +120,36 @@ public class Game {
             options.add("Fight");
         }
         return options;
+    }
+
+    private void loadUnits(int levelNumber) throws IOException {
+        units = new ArrayList<>();
+        String path = String.format("resources/levels/level%d/unitdef.txt", levelNumber);
+        Scanner scanner = new Scanner(new File(path));
+        ArrayList<String> lines = new ArrayList<>();
+        while (scanner.hasNextLine()) {
+            lines.add(scanner.nextLine());
+        }
+
+        for (String line : lines) {
+            String[] options = line.split(",");
+            int unitChoice = Integer.parseInt(options[0].trim());
+            int x = Integer.parseInt(options[1].trim());
+            int y = Integer.parseInt(options[2].trim());
+            int playerIndex = Integer.parseInt(options[3].trim());
+            Unit unit = UnitEnum.values()[unitChoice].getUnitInstance(players.get(playerIndex), playerIndex, x, y);
+            units.add(unit);
+        }
+    }
+
+    private void loadMap(int levelNumber) throws FileNotFoundException {
+        String path = String.format("resources/levels/level%d/mapdef.txt", levelNumber);
+        Scanner scanner = new Scanner(new File(path));
+        ArrayList<String> lines = new ArrayList<>();
+        while (scanner.hasNextLine()) {
+            lines.add(scanner.nextLine());
+        }
+
+        map = new Map(lines);
     }
 }
