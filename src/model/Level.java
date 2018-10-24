@@ -48,9 +48,9 @@ public class Level {
         players.add(new Player());
 
         try {
-            loadMap(1);
-            loadUnits(1);
-            loadDialog(1);
+            loadMap(levelNumber);
+            loadUnits(levelNumber);
+            loadDialog(levelNumber);
         } catch (IOException e) {
             e.printStackTrace();
         }
